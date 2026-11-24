@@ -115,7 +115,7 @@ nav .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px m
 label{font-weight:600;font-size:15px}
 select,textarea{width:100%;margin-top:6px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
 .cart .btn{width:100%}
-.cart .btn:disabled{opacity:.45;cursor:not-allowed}
+.cart .btn[aria-disabled=true]{opacity:.45;pointer-events:none}
 .cart .btn.busy{opacity:.7;cursor:progress}
 .ask-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--mag);color:var(--mag);font-weight:600;text-decoration:none;white-space:nowrap}
 #okdlg{width:min(560px,calc(100vw - 24px));border:0;border-radius:22px;padding:28px;background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
@@ -260,55 +260,12 @@ input[type=text],input[type=tel],input[type=email]{width:100%;margin-top:6px;pad
       <div class="more"><button class="btn ghost" id="moreBtn" hidden>Ver más productos</button></div>
     </div>
     <aside class="cart" id="carrito" aria-label="Carrito">
-      <h3>Tu pedido</h3>
+      <h3>Tu carrito</h3>
       <div class="items" id="items"></div>
-      <div class="total"><span>Total</span><span id="total">$0</span></div>
-      <div>
-        <label for="nombre">Tu nombre</label>
-        <input id="nombre" type="text" autocomplete="name" placeholder="Ej.: Laura Gómez">
-      </div>
-      <div>
-        <label for="tel">Teléfono</label>
-        <input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ej.: 3765 123456">
-      </div>
-      <div>
-        <label for="mail">Email (opcional)</label>
-        <input id="mail" type="email" autocomplete="email" placeholder="Para el comprobante de pago">
-      </div>
-      <fieldset class="opts" id="entrega">
-        <legend>¿Cómo lo recibís?</legend>
-        <label class="opt"><input type="radio" name="entrega" value="retiro" checked><span><b>Retiro en sucursal</b><small>Sin costo</small></span></label>
-        <label class="opt"><input type="radio" name="entrega" value="envio"><span><b>Envío a domicilio</b><small>El envío se paga al recibir</small></span></label>
-      </fieldset>
-      <div id="boxRetiro">
-        <label for="sucursal">Sucursal</label>
-        <select id="sucursal">
-          <option>Local 1 · Mitre 2470, Posadas</option>
-          <option>Local 3 · Buenos Aires 1556, Posadas</option>
-          <option>Local 4 · Itaembé Guazú, Posadas</option>
-          <option>Local 2 · Jujuy 114, Oberá</option>
-        </select>
-      </div>
-      <div id="boxEnvio" hidden>
-        <label for="dir">Dirección</label>
-        <input id="dir" type="text" autocomplete="street-address" placeholder="Calle, número, piso/depto">
-        <label for="loc" style="display:block;margin-top:10px">Localidad</label>
-        <input id="loc" type="text" autocomplete="address-level2" placeholder="Ej.: Posadas">
-        <p class="small" style="margin-top:6px">En la página pagás solo los productos. El costo del envío se abona al recibir y depende de la zona.</p>
-      </div>
-      <fieldset class="opts" id="pago">
-        <legend>¿Cómo pagás?</legend>
-        <label class="opt"><input type="radio" name="pago" value="tarjeta" checked><span><b>Tarjeta de crédito o débito</b><small>Pago seguro con Mercado Pago, en cuotas si tu tarjeta lo permite</small></span></label>
-        <label class="opt"><input type="radio" name="pago" value="mercadopago"><span><b>Mercado Pago</b><small>Con tu dinero en cuenta o tarjetas guardadas</small></span></label>
-        <label class="opt"><input type="radio" name="pago" value="efectivo"><span><b>Efectivo</b><small id="efNote">Al retirar en la sucursal</small></span></label>
-      </fieldset>
-      <div>
-        <label for="nota">Aclaraciones (opcional)</label>
-        <textarea id="nota" rows="2" placeholder="Ej.: horario para recibir, tono de tintura…"></textarea>
-      </div>
-      <p class="small warnmsg" id="falta" hidden></p>
-      <button class="btn" id="send" type="button" disabled>Ir a pagar</button>
-      <p class="small" id="sendNote">Vas a pagar en la pantalla segura de Mercado Pago y volvés a la tienda con la confirmación.</p>
+      <div class="total"><span>Subtotal</span><span id="total">$0</span></div>
+      <p class="small">Retirás gratis en sucursal o te lo enviamos (el envío se paga al recibir).</p>
+      <a class="btn" id="send" href="/checkout/" aria-disabled="true">Iniciar compra</a>
+      <p class="small">Pagás con tarjeta, Mercado Pago o efectivo.</p>
     </aside>
   </div>
 </section>
@@ -371,9 +328,9 @@ input[type=text],input[type=tel],input[type=email]{width:100%;margin-top:6px;pad
 
 <footer><div class="wrap"><span>Distribuidor HLC · Artículos de belleza · Distribuidor oficial Fidelité</span><span>Posadas y Oberá, Misiones</span></div></footer>
 
-<dialog id="okdlg" aria-labelledby="oktit"><div class="okico" id="okico">✓</div><h2 id="oktit"></h2><p id="okmsg"></p><span class="oid" id="okid"></span><ul id="okitems"></ul><button class="btn" id="okclose" style="width:100%;margin-top:8px">Seguir comprando</button></dialog>
+
 <dialog id="ficha" aria-labelledby="fname"><button class="fclose" id="fclose" aria-label="Cerrar">×</button><div class="fwrap"><div class="fimg" id="fimg"></div><div class="fbody"><div class="fmeta" id="fmeta"></div><h2 id="fname"></h2><div class="sizes" id="fsizes"></div><div class="fprice"><span id="fprice"></span><button class="add" id="fadd">Agregar al pedido</button></div><h3>Descripción</h3><p id="fdesc"></p><div id="fmodo"></div><p class="src">Información basada en la ficha del fabricante. Ante cualquier duda, consultanos por WhatsApp.</p></div></div></dialog>
-<div class="mbar" id="mbar" hidden><span id="mtxt">0 productos</span><a class="btn" href="#carrito">Ver pedido</a></div>
+<div class="mbar" id="mbar" hidden><span id="mtxt">0 productos</span><a class="btn" href="/checkout/">Iniciar compra</a></div>
 
 <script>
 {
@@ -429,73 +386,20 @@ moreBtn.addEventListener('click',()=>{shown+=PAGE;drawGrid()});
 grid.addEventListener('click',e=>{const o=e.target.closest('[data-open]');if(o){e.preventDefault();openFicha(+o.dataset.open);return}const b=e.target.closest('.add');if(!b)return;const id=b.dataset.id;cart[id]=(cart[id]||0)+1;save();drawCart();b.textContent='Agregar otro'});
 document.getElementById('q').addEventListener('input',e=>{q=e.target.value;shown=PAGE;drawGrid()});
 
-const items=document.getElementById('items'),send=document.getElementById('send'),nota=document.getElementById('nota');
-const $=id=>document.getElementById(id);const rv=n=>(document.querySelector('input[name='+n+']:checked')||{}).value;
-const DATOS=['nombre','tel','mail','dir','loc'];
-try{const s=JSON.parse(localStorage.getItem('hlc-datos')||'{}');DATOS.forEach(k=>{if(s[k])$(k).value=s[k]})}catch(e){}
-const saveDatos=()=>{try{const o={};DATOS.forEach(k=>o[k]=$(k).value);localStorage.setItem('hlc-datos',JSON.stringify(o))}catch(e){}};
-let enviando=false;
-function faltantes(){const ent=rv('entrega');return [!$('nombre').value.trim()&&'tu nombre',$('tel').value.replace(/\D/g,'').length<8&&'un teléfono válido',ent==='envio'&&!$('dir').value.trim()&&'la dirección',ent==='envio'&&!$('loc').value.trim()&&'la localidad'].filter(Boolean)}
+const items=document.getElementById('items'),send=document.getElementById('send');
+const $=id=>document.getElementById(id);
 function drawCart(){
   for(const k of Object.keys(cart)){if(!P[k]||!P[k][6])delete cart[k]}
   const lines=Object.entries(cart).filter(([id,n])=>n>0&&P[id]).map(([id,n])=>({id,p:P[id],n}));
   const tot=lines.reduce((s,l)=>s+l.p[6]*l.n,0),cnt=lines.reduce((s,l)=>s+l.n,0);
   const label=p=>p[0]+(p[2]?' '+p[2]:'');
   items.innerHTML=lines.length?lines.map(l=>`<div class="it"><span>${esc(label(l.p))}</span><em>${money(l.p[6]*l.n)}</em><div class="qty"><button data-d="-1" data-id="${l.id}" aria-label="Quitar uno">−</button><b>${l.n}</b><button data-d="1" data-id="${l.id}" aria-label="Agregar uno">+</button><button class="rm" data-d="x" data-id="${l.id}">Quitar</button></div></div>`).join(''):`<p class="small">Todavía no agregaste productos. Elegí lo que necesites de la tienda.</p>`;
-  $('total').textContent=money(tot);
-  $('count').textContent=cnt;
-  $('mbar').hidden=!cnt;
-  $('mtxt').textContent=cnt+(cnt===1?' producto · ':' productos · ')+money(tot);
-  const ef=rv('pago')==='efectivo';
-  send.textContent=ef?'Confirmar pedido':'Ir a pagar '+(tot?money(tot):'');
-  $('sendNote').textContent=ef?'Tu pedido queda registrado y lo pagás en efectivo '+(rv('entrega')==='envio'?'al recibirlo.':'al retirarlo.'):'Vas a pagar en la pantalla segura de Mercado Pago y volvés a la tienda con la confirmación.';
-  const falta=lines.length?faltantes():[];
-  $('falta').hidden=!falta.length;$('falta').textContent=falta.length?'Para continuar completá '+falta.join(', ').replace(/, ([^,]*)$/,' y $1')+'.':'';
-  send.disabled=enviando||!lines.length||falta.length>0;
+  $('total').textContent=money(tot);$('count').textContent=cnt;
+  $('mbar').hidden=!cnt;$('mtxt').textContent=cnt+(cnt===1?' producto · ':' productos · ')+money(tot);
+  send.setAttribute('aria-disabled',lines.length?'false':'true');
 }
-async function enviarPedido(){
-  if(send.disabled)return;
-  const ent=rv('entrega');
-  const body={items:Object.entries(cart).map(([id,qty])=>({id:+id,qty})),
-    cliente:{nombre:$('nombre').value,telefono:$('tel').value,email:$('mail').value},
-    entrega:ent==='envio'?{tipo:'envio',direccion:$('dir').value,localidad:$('loc').value}:{tipo:'retiro',sucursal:$('sucursal').value},
-    pago:rv('pago'),nota:nota.value};
-  enviando=true;send.classList.add('busy');send.textContent='Procesando…';send.disabled=true;$('falta').hidden=true;
-  try{
-    const r=await fetch('/api/pedidos',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
-    const d=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(d.error||'No pudimos registrar el pedido. Probá de nuevo.');
-    if(d.pagarEn){try{sessionStorage.setItem('hlc-ultimo',d.id)}catch(e){}location.href=d.pagarEn;return}
-    cart={};save();drawCart();drawGrid();mostrarPedido(d.id);
-  }catch(err){$('falta').textContent=err.message;$('falta').hidden=false}
-  finally{enviando=false;send.classList.remove('busy');drawCart()}
-}
-send.addEventListener('click',enviarPedido);
-const EST={pagado:['Pago aprobado','#1c9e50','✓','Recibimos tu pago. Te avisamos cuando el pedido esté listo.'],
-  pago_pendiente:['Pago pendiente','#c98a00','…','Todavía no se acreditó el pago. Si pagaste en efectivo en un punto de pago, puede demorar unas horas.'],
-  pago_en_revision:['Pago en revisión','#c98a00','…','Mercado Pago está revisando el pago. Te avisamos cuando se apruebe.'],
-  pago_rechazado:['Pago rechazado','#c0392b','!','El pago no se aprobó. Podés volver a intentarlo con otro medio de pago.'],
-  pago_cancelado:['Pago cancelado','#c0392b','!','El pago se canceló. Podés hacer el pedido de nuevo cuando quieras.'],
-  efectivo_pendiente:['¡Pedido confirmado!','#1c9e50','✓','Lo pagás en efectivo al retirarlo o al recibirlo.'],
-  listo:['Pedido listo','#1c9e50','✓','Tu pedido está listo.'],enviado:['Pedido enviado','#1c9e50','✓','Tu pedido está en camino.'],
-  entregado:['Pedido entregado','#1c9e50','✓','¡Gracias por tu compra!'],cancelado:['Pedido cancelado','#c0392b','!','Este pedido fue cancelado.']};
-async function mostrarPedido(id,intento=0){
-  const dl=$('okdlg');let d;
-  try{const r=await fetch('/api/pedido?id='+encodeURIComponent(id));d=await r.json();if(!r.ok)throw 0}catch(e){d=null}
-  const e=d?EST[d.estado]||EST.pago_pendiente:['No encontramos el pedido','#c0392b','!','Si ya pagaste, guardá el comprobante de Mercado Pago y consultanos.'];
-  $('okico').style.background=e[1];$('okico').textContent=e[2];$('oktit').textContent=e[0];$('okmsg').textContent=e[3];
-  $('okid').textContent='Pedido '+id;$('okid').hidden=!d;
-  $('okitems').innerHTML=d?d.items.map(i=>`<li>${i.qty} × ${esc(i.nombre)}${i.tam?' '+esc(i.tam):''}</li>`).join('')+`<li><b>Total productos: ${money(d.total)}</b></li>`+(d.entrega.tipo==='retiro'?`<li>Retiro en ${esc(d.entrega.sucursal)}</li>`:'<li>Envío a domicilio (el envío se paga al recibir)</li>'):'';
-  if(!dl.open){try{dl.showModal()}catch(x){dl.setAttribute('open','')}}
-  if(d&&['pagado','pago_pendiente','pago_en_revision','efectivo_pendiente'].includes(d.estado)){cart={};save();drawCart();drawGrid()}
-  if(d&&d.estado==='pago_pendiente'&&d.pago!=='efectivo'&&intento<4)setTimeout(()=>mostrarPedido(id,intento+1),4000);
-}
-$('okclose').addEventListener('click',()=>{$('okdlg').close();try{const u=new URL(location.href);u.searchParams.delete('pedido');u.searchParams.delete('collection_id');history.replaceState(null,'',u.pathname+u.hash)}catch(e){}});
+send.addEventListener('click',e=>{if(send.getAttribute('aria-disabled')==='true')e.preventDefault()});
 items.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;const id=b.dataset.id;if(b.dataset.d==='x')delete cart[id];else{cart[id]=(cart[id]||0)+Number(b.dataset.d);if(cart[id]<=0)delete cart[id]}save();drawCart();drawGrid()});
-nota.addEventListener('input',drawCart);
-const syncEnt=()=>{const env=rv('entrega')==='envio';$('boxEnvio').hidden=!env;$('boxRetiro').hidden=env;$('efNote').textContent=env?'Al recibir el envío':'Al retirar en la sucursal'};
-document.querySelectorAll('input[name=entrega],input[name=pago]').forEach(r=>r.addEventListener('change',()=>{syncEnt();drawCart()}));
-DATOS.forEach(k=>$(k).addEventListener('input',()=>{saveDatos();drawCart()}));$('sucursal').addEventListener('change',drawCart);syncEnt();
 const dlg=document.getElementById('ficha');let cur=-1;
 function openFicha(i){const p=P[i];if(!p)return;cur=i;const f=FI[p[10]]||['',[]];
   document.getElementById('fimg').className='fimg'+(p[9]?'':' draw');
@@ -521,7 +425,7 @@ document.getElementById('fadd').addEventListener('click',()=>{if(cur<0||!P[cur][
 const fromHash=()=>{const m=location.hash.match(/^#producto-(\d+)$/);if(m)openFicha(+m[1])};
 window.addEventListener('hashchange',fromHash);
 drawChips();drawGrid();drawCart();fromHash();
-{const pid=new URLSearchParams(location.search).get('pedido');if(pid)mostrarPedido(pid)}
+{const pid=new URLSearchParams(location.search).get('pedido');if(pid)location.replace('/checkout/?pedido='+encodeURIComponent(pid))}
 }
 </script>
 </body>

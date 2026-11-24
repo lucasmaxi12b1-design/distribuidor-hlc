@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Finalizar compra · Distribuidor HLC</title>
+<link rel="icon" href="/img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE calm, trustworthy checkout: nothing to distract from paying
+   IDEA a store receipt being filled in: steps on the left, the ticket on the right
+   PICTURE the order summary itself, with product photos, as the fixed reference
+   COLOUR white ground, ink text, HLC fuchsia only for the primary action and progress
+   TYPE Outfit 800 titles + Outfit text
+   LAYOUT laptop: steps column + sticky summary; phone: collapsible summary bar, then steps */
+:root{color-scheme:light;--bg:#ffffff;--soft-bg:#f7f4f6;--ink:#1e0f1b;--soft:#6b5a68;--line:#e8dde5;--mag:#b0009b;--magd:#7d006f;--ok:#1c8a4a;--bad:#c0392b;--warn:#b07800}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Outfit,system-ui,sans-serif}
+h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em}
+a{color:inherit}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--mag);outline-offset:2px}
+header{background:#0b0509;color:#fff}
+header .in{max-width:1080px;margin:0 auto;padding:12px max(4vw,16px);display:flex;align-items:center;gap:12px}
+header .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;margin-right:auto}
+header img{width:38px;height:38px}
+header .safe{font-size:14px;color:#e6cfe2;display:flex;align-items:center;gap:6px}
+.wrap{max-width:1080px;margin:0 auto;padding:24px max(4vw,16px) 60px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);max-width:640px;margin:4px auto 28px;position:relative}
+.steps::before{content:"";position:absolute;left:16.6%;right:16.6%;top:17px;height:2px;background:var(--line)}
+.steps .bar{position:absolute;left:16.6%;top:17px;height:2px;background:var(--mag);transition:width .3s}
+.st{position:relative;display:grid;justify-items:center;gap:6px;font-size:15px;color:var(--soft);background:none;border:0;padding:0;cursor:default}
+.st i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--line);font-style:normal;font-weight:700;font-size:15px}
+.st.done{cursor:pointer}.st.done i{background:var(--mag);border-color:var(--mag);color:#fff}
+.st.on{color:var(--ink);font-weight:600}.st.on i{border-color:var(--mag);color:var(--mag)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:32px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:16px;margin-bottom:14px;background:#fff}
+.ph{display:flex;align-items:center;gap:12px;padding:18px 20px}
+.ph h2{font-size:19px;margin-right:auto}
+.ph .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft-bg);font-weight:700;font-size:14px;flex:none}
+.panel.done .ph .n{background:var(--mag);color:#fff}
+.chg{background:none;border:0;color:var(--mag);font-weight:600;text-decoration:underline;cursor:pointer;min-height:40px}
+.sum{padding:0 20px 18px 60px;color:var(--soft);font-size:15px}
+.pb{padding:0 20px 20px}
+.f{display:grid;gap:6px;margin-bottom:14px}
+.f label{font-weight:600;font-size:15px}
+.f input,.f select,.f textarea{width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:16px}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--mag);outline:none}
+.f .err{color:var(--bad);font-size:14px}
+.f.bad input{border-color:var(--bad)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;cursor:pointer;margin-bottom:10px}
+.opt:has(input:checked){border-color:var(--mag);background:#fdf3fb}
+.opt input{accent-color:var(--mag);width:20px;height:20px;margin:2px 0 0;flex:none}
+.opt span{display:grid;gap:2px;flex:1}
+.opt b{font-size:16px}
+.opt small{color:var(--soft);font-size:14px}
+.opt em{font-style:normal;font-weight:600;white-space:nowrap}
+.tag{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:6px;background:var(--ink);color:#fff;font-size:12px;font-weight:600;width:max-content}
+.btn{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:0 20px;border-radius:14px;border:0;background:var(--mag);color:#fff;font-weight:700;font-size:17px;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--magd)}
+.btn:disabled{opacity:.6;cursor:progress}
+.btn.ghost{background:#fff;color:var(--mag);border:2px solid var(--mag)}
+.note{font-size:14px;color:var(--soft);margin-top:10px;text-align:center}
+.alert{padding:12px 14px;border-radius:12px;background:#fdecea;color:var(--bad);font-weight:600;margin-bottom:12px;font-size:15px}
+aside{position:sticky;top:20px;background:var(--soft-bg);border-radius:16px;padding:20px}
+aside h3{font-size:18px;margin-bottom:12px}
+.li{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0}
+.th{position:relative;width:56px;height:56px;border-radius:10px;background:#fff;display:grid;place-items:center;border:1px solid var(--line)}
+.th img{max-width:48px;max-height:48px}
+.th b{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:var(--soft);color:#fff;font-size:12px;display:grid;place-items:center;padding:0 5px}
+.li span{font-size:14px;line-height:1.3}
+.li em{font-style:normal;font-weight:600;font-size:15px;white-space:nowrap}
+.tot{border-top:1px solid var(--line);margin-top:10px;padding-top:12px;display:grid;gap:8px}
+.tot div{display:flex;justify-content:space-between;gap:10px;font-size:15px}
+.tot .big{font-size:20px;font-weight:800;padding-top:6px}
+.tot small{color:var(--soft)}
+.mob{display:none}
+.empty{text-align:center;padding:60px 20px;display:grid;gap:16px;justify-items:center}
+.res{max-width:620px;margin:10px auto;text-align:center;display:grid;gap:14px;justify-items:center}
+.ico{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:36px;font-weight:700}
+.res h1{font-size:clamp(28px,4vw,38px)}
+.res .oid{padding:6px 14px;border-radius:999px;background:var(--soft-bg);font-weight:700}
+.res .box{width:100%;text-align:left;border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.res .box li{margin:4px 0}
+.res .box ul{margin:8px 0 0;padding-left:20px}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}aside{position:static;display:none}aside.open{display:block}.mob{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--soft-bg);margin-bottom:16px;cursor:pointer;font-weight:600;color:var(--ink)}.mob b{font-size:18px}}
+@media(max-width:520px){.two{grid-template-columns:minmax(0,1fr)}.sum{padding-left:20px}.st{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="in"><a class="brand" href="/"><img src="/img/icon.png" alt="">Distribuidor HLC</a><span class="safe"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Compra segura</span></div></header>
+<main class="wrap">
+
+<section id="vEmpty" class="empty" hidden>
+  <h1>Tu carrito está vacío</h1>
+  <p>Elegí tus productos en la tienda y volvé para finalizar la compra.</p>
+  <a class="btn" href="/#tienda" style="max-width:320px">Ir a la tienda</a>
+</section>
+
+<section id="vRes" class="res" hidden>
+  <div class="ico" id="rIco">✓</div>
+  <h1 id="rTit"></h1>
+  <p id="rMsg"></p>
+  <span class="oid" id="rId"></span>
+  <div class="box" id="rBox"></div>
+  <a class="btn" href="/" style="max-width:340px">Volver a la tienda</a>
+</section>
+
+<section id="vCo" hidden>
+  <nav class="steps" aria-label="Pasos"><span class="bar" id="bar"></span>
+    <button class="st" data-s="1"><i>1</i>Datos</button>
+    <button class="st" data-s="2"><i>2</i>Entrega</button>
+    <button class="st" data-s="3"><i>3</i>Pago</button>
+  </nav>
+  <button class="mob" id="mob" aria-expanded="false"><span>Ver resumen del pedido ▾</span><b id="mobTot"></b></button>
+  <div class="grid">
+    <div>
+      <div class="panel" id="p1">
+        <div class="ph"><span class="n">1</span><h2>Tus datos</h2><button class="chg" data-go="1" hidden>Cambiar</button></div>
+        <div class="sum" id="s1" hidden></div>
+        <div class="pb" id="b1">
+          <div class="f" id="f-nombre"><label for="nombre">Nombre y apellido</label><input id="nombre" autocomplete="name" placeholder="Ej.: Laura Gómez"><span class="err" hidden>Ingresá tu nombre.</span></div>
+          <div class="two">
+            <div class="f" id="f-tel"><label for="tel">Teléfono</label><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ej.: 3765 123456"><span class="err" hidden>Ingresá un teléfono válido.</span></div>
+            <div class="f" id="f-mail"><label for="mail">Email <small style="font-weight:400;color:var(--soft)">(opcional)</small></label><input id="mail" type="email" autocomplete="email" placeholder="Para el comprobante"><span class="err" hidden>Revisá el email.</span></div>
+          </div>
+          <button class="btn" data-next="1">Continuar</button>
+        </div>
+      </div>
+      <div class="panel" id="p2">
+        <div class="ph"><span class="n">2</span><h2>Entrega</h2><button class="chg" data-go="2" hidden>Cambiar</button></div>
+        <div class="sum" id="s2" hidden></div>
+        <div class="pb" id="b2" hidden>
+          <label class="opt"><input type="radio" name="entrega" value="retiro" checked><span><b>Retiro en sucursal</b><small>Lo preparamos y te avisamos cuando esté listo.</small></span><em>Gratis</em></label>
+          <label class="opt"><input type="radio" name="entrega" value="envio"><span><b>Envío a domicilio</b><small>El costo del envío se paga al recibir y depende de la zona.</small></span><em>Al recibir</em></label>
+          <div class="f" id="boxRetiro"><label for="sucursal">¿En qué sucursal?</label>
+            <select id="sucursal"><option>Local 1 · Mitre 2470, Posadas</option><option>Local 3 · Buenos Aires 1556, Posadas</option><option>Local 4 · Itaembé Guazú, Posadas</option><option>Local 2 · Jujuy 114, Oberá</option></select></div>
+          <div id="boxEnvio" hidden>
+            <div class="f" id="f-dir"><label for="dir">Dirección</label><input id="dir" autocomplete="street-address" placeholder="Calle, número, piso/depto"><span class="err" hidden>Ingresá la dirección.</span></div>
+            <div class="f" id="f-loc"><label for="loc">Localidad</label><input id="loc" autocomplete="address-level2" placeholder="Ej.: Posadas"><span class="err" hidden>Ingresá la localidad.</span></div>
+          </div>
+          <div class="f"><label for="nota">Notas del pedido <small style="font-weight:400;color:var(--soft)">(opcional)</small></label><textarea id="nota" rows="2" placeholder="Ej.: horario para recibir, tono de tintura…"></textarea></div>
+          <button class="btn" data-next="2">Continuar al pago</button>
+        </div>
+      </div>
+      <div class="panel" id="p3">
+        <div class="ph"><span class="n">3</span><h2>Medio de pago</h2></div>
+        <div class="pb" id="b3" hidden>
+          <label class="opt"><input type="radio" name="pago" value="tarjeta" checked><span><b>Tarjeta de crédito o débito</b><small>Pagás en la pantalla segura de Mercado Pago.</small><span class="tag">Cuotas según tu tarjeta</span></span></label>
+          <label class="opt"><input type="radio" name="pago" value="mercadopago"><span><b>Mercado Pago</b><small>Con dinero en cuenta o tus tarjetas guardadas.</small></span></label>
+          <label class="opt"><input type="radio" name="pago" value="efectivo"><span><b>Efectivo</b><small id="efNote">Pagás al retirar en la sucursal.</small></span></label>
+          <div class="alert" id="err" hidden></div>
+          <button class="btn" id="pay">Pagar</button>
+          <p class="note" id="payNote"></p>
+        </div>
+      </div>
+    </div>
+    <aside id="aside" aria-label="Resumen del pedido">
+      <h3>Resumen del pedido</h3>
+      <div id="lines"></div>
+      <div class="tot">
+        <div><span>Subtotal</span><span id="sub"></span></div>
+        <div><span>Envío</span><small id="envLine">Gratis (retiro)</small></div>
+        <div class="big"><span>Total</span><span id="tot"></span></div>
+      </div>
+      <a href="/#carrito" style="display:block;margin-top:14px;font-size:14px;color:var(--mag);font-weight:600">Modificar carrito</a>
+    </aside>
+  </div>
+</section>
+</main>
+<script>
+{
+const P={"0":["Miracle Retouch","100 ml",19990,"p35.jpg","Fidelité","#d62839"],"1":["Revelador en Crema Perfumado - 10 Vol.","990 ml",8650,"p36.jpg","Colormaster","#d62839"],"2":["Revelador en Crema Perfumado - 20 Vol.","990 ml",8900,"p37.jpg","Colormaster","#d62839"],"3":["Revelador en Crema Perfumado - 30 Vol.","990 ml",10400,"p38.jpg","Colormaster","#d62839"],"4":["Revelador en Crema Perfumado - 40 Vol.","990 ml",10550,"p39.jpg","Colormaster","#d62839"],"5":["Revelador Caviar Color Cream - 10 Vol.","900 ml",8750,"p22.jpg","Caviar","#1d1d1d"],"6":["Revelador Caviar Color Cream - 20 Vol.","900 ml",9300,"p23.jpg","Caviar","#1d1d1d"],"7":["Revelador Caviar Color Cream - 30 Vol.","900 ml",9920,"p24.jpg","Caviar","#1d1d1d"],"8":["Revelador Caviar Color Cream - 40 Vol.","900 ml",10400,"p25.jpg","Caviar","#1d1d1d"],"9":["Tintura en Crema - 1 + 1 1/2","60 g",3900,"","Colormaster","#d62839"],"10":["Tintura en Crema - NON AMMONIA VEGANA","60 g",4950,"","Non ammonia","#3a9d5d"],"13":["Quitamanchas","125 ml",4200,"","Colormaster","#d62839"],"14":["Color Express - Coloración Instantánea sin Amoníaco","3 x 30 ml",4300,"","Colormaster","#d62839"],"15":["Revelador en Crema Perfumado - 20 Vol.","90 ml",2530,"","Colormaster","#d62839"],"16":["Revelador en Crema Perfumado - 30 Vol.","90 ml",2530,"","Colormaster","#d62839"],"18":["Tintura en Crema Caviar - Caviar Color Cream 30 Tonos","60 g",5720,"","Caviar","#1d1d1d"],"20":["Revelador en crema NON AMMONIA - 8 Vol.","900 ml",8100,"","Non ammonia","#3a9d5d"],"21":["Revelador en crema NON AMMONIA - 10 Vol.","900 ml",8300,"","Non ammonia","#3a9d5d"],"22":["Revelador en crema NON AMMONIA - 15 Vol.","900 ml",8600,"","Non ammonia","#3a9d5d"],"23":["Revelador en crema NON AMMONIA - 20 Vol.","900 ml",8850,"","Non ammonia","#3a9d5d"],"24":["Revelador en crema NON AMMONIA - 30 Vol.","900 ml",9500,"","Non ammonia","#3a9d5d"],"25":["Revelador en crema NON AMMONIA - 40 Vol.","900 ml",9990,"","Non ammonia","#3a9d5d"],"26":["Shampoo Cremoso Neutro","5000 ml",35200,"","Colormaster","#c2189a"],"27":["Acondicionador Cremoso Acido","5000 ml",35200,"","Colormaster","#c2189a"],"28":["Shampoo Cremoso Neutro","1000 ml",11550,"","Colormaster","#c2189a"],"29":["Acondicionador Cremoso Acido","1000 ml",11550,"","Colormaster","#c2189a"],"30":["Shampoo Extra Ácido Colormaster","1000 ml",11800,"","Colormaster","#c2189a"],"31":["Shampoo de Keratina en Pomo","230 ml",5700,"","Fidelité","#c2189a"],"32":["Acondicionador de Keratina en Pomo","230 ml",5700,"","Fidelité","#c2189a"],"33":["Shampoo de Keratina ¡Re-Lanzamiento!","900 ml",16600,"","Fidelité","#c2189a"],"34":["Acondicionador de Keratina ¡Re-Lanzamiento!","900 ml",16600,"","Fidelité","#c2189a"],"35":["Shampoo Corrector para Neutralizar Rubios","230 ml",6600,"","Fidelité","#6b3fa0"],"36":["Acondicionador Corrector para Neutralizar Tonos Dorados 7/9","230 ml",6600,"","Fidelité","#6b3fa0"],"37":["Acondicionador Corrector para Realzar Plateados 10+","230 ml",6600,"","Fidelité","#6b3fa0"],"38":["Shampoo Corrector para Neutralizar Rubios","900 ml",16900,"","Fidelité","#6b3fa0"],"39":["Shampoo Ultra Black (gris platino)","230 ml",6900,"","Fidelité","#3a3a3a"],"40":["Shampoo Extra Ácido","230 ml",5700,"","Colormaster","#c2189a"],"41":["Shampoo Cremoso Neutro","230 ml",5700,"","Colormaster","#c2189a"],"42":["Acondicionador Cremoso Ácido","230 ml",5700,"","Colormaster","#c2189a"],"43":["Shampoo Extra Acido","5000 ml",37400,"","Colormaster","#c2189a"],"44":["Cofre de Perfección 12 Unid. x 20 gr","12 x 20 g",2970,"p18.jpg","Fidelité","#e0679f"],"45":["Crema Extra Ácida pH3,5 D-Pantenol","1000 g",17700,"","Colormaster","#e0679f"],"46":["Crema Extra Ácida pH3,5 D-Pantenol","270 g",6490,"","Colormaster","#e0679f"],"47":["Máscara Capilar Keratina","1000 g",17700,"","Fidelité","#e0679f"],"48":["Máscara Capilar Keratina","270 g",6490,"","Fidelité","#e0679f"],"49":["Máscara Capilar Almendras","1000 g",17700,"","Fidelité","#e0679f"],"50":["Máscara Capilar Almendras","270 g",6490,"","Fidelité","#e0679f"],"51":["Máscara Capilar Coco & Vainilla","1000 g",17700,"","Fidelité","#e0679f"],"52":["Máscara Capilar Coco & Vainilla","270 g",6490,"","Fidelité","#e0679f"],"53":["Semilla de Lino Reestruct. (Caja Amp.)","12 x 15 ml",2600,"","Fidelité","#e0679f"],"54":["Complejo Nutritivo Instantáneo (Caja Amp.)","12 x 15 ml",2700,"","Fidelité","#e0679f"],"55":["Complejo Keratínico (Caja Amp.)","12 x 15 ml",2700,"","Fidelité","#e0679f"],"56":["Máscara Ultra Black (gris platino)","270 ml",9500,"","Fidelité","#3a3a3a"],"57":["Máscara p/Neutralizar Tonos Dorados Purple","1000 ml",19100,"","Fidelité","#6b3fa0"],"58":["Desenredante Instantáneo Bi-Fase","250 ml",14200,"","Fidelité","#2b6fd6"],"59":["Reparador de Puntas de Lino \"medium density\"","30 ml",15200,"","Fidelité","#2b6fd6"],"60":["Reparador de Puntas de Girasol \"high density\"","30 ml",15200,"","Fidelité","#2b6fd6"],"61":["Gel Efecto Húmedo \"Fijación Natural\"","230 g",5200,"","Fidelité","#2b6fd6"],"62":["Gel Efecto Húmedo \"Fijación Natural\"","1000 g",12100,"","Fidelité","#2b6fd6"],"63":["Gel Fix \"Fijación Extrema\"","230 g",9400,"","Fidelité","#2b6fd6"],"64":["Gel Fix \"Fijación Extrema\"","1000 g",23000,"","Fidelité","#2b6fd6"],"65":["Gel Efecto Húmedo \"Fijación Extrema\"","230 g",16800,"","Fidelité","#2b6fd6"],"66":["Gel Efecto Húmedo \"Fijación Extrema\"","1000 g",51200,"","Fidelité","#2b6fd6"],"69":["Urban Shield 365 for hair Escudo Capilar con Filtro Solar","120 ml",14760,"","Fidelité","#2b6fd6"],"70":["Brillo Instantáneo Argán Oil Shine Mist","120 ml",19500,"p3.jpg","Fidelité","#c8902a"],"71":["Mythical Shampoo Argán","260 ml",10700,"p8.jpg","Fidelité","#c8902a"],"72":["Mythical Conditioner Argán","260 ml",10700,"p1.jpg","Fidelité","#c8902a"],"73":["Mythical Shampoo Argán","900 ml",25850,"p9.jpg","Fidelité","#c8902a"],"74":["Mythical Conditioner Argán ¡Re-Lanzamiento!","900 ml",25850,"p2.jpg","Fidelité","#c8902a"],"75":["Mythical Mascara Capilar Argán","250 ml",12000,"p0.jpg","Fidelité","#c8902a"],"76":["Mythical Mascara Capilar Argán","1000 ml",26950,"p6.jpg","Fidelité","#c8902a"],"77":["Mythical Elixir Oil Argán","120 ml",31790,"p5.jpg","Fidelité","#c8902a"],"78":["Mythical Elixir Oil Travel Size Argán","12 x 10 ml",4800,"p11.jpg","Fidelité","#c8902a"],"79":["Ampolla Intensive Argán","12 x 15 ml",3000,"p10.jpg","Fidelité","#c8902a"],"80":["Protector Térmico Capilar Argán","120 ml",26400,"p7.jpg","Fidelité","#c8902a"],"81":["Crema de Peinado Argán","250 ml",8260,"p4.jpg","Fidelité","#c8902a"],"82":["Caviar Plex Home Ritual Conditioner | Step Nº 3","230 ml",9870,"p13.jpg","Caviar","#1d1d1d"],"83":["Shampoo Cabellos Secos & Castigados","260 ml",8980,"p31.jpg","Caviar","#1d1d1d"],"84":["Shampoo Cabellos Teñidos","260 ml",8980,"p33.jpg","Caviar","#1d1d1d"],"85":["Shampoo Cabellos Grasos","260 ml",8980,"p27.jpg","Caviar","#1d1d1d"],"86":["Shampoo Cabellos Normales","260 ml",8980,"p29.jpg","Caviar","#1d1d1d"],"87":["Conditioner Cabellos Secos & Castigados","260 ml",8980,"p14.jpg","Caviar","#1d1d1d"],"88":["Conditioner Cabellos Teñidos","260 ml",8980,"p16.jpg","Caviar","#1d1d1d"],"89":["Conditioner Cabellos Grasos","260 ml",8980,"p12.jpg","Caviar","#1d1d1d"],"90":["Shampoo Cabellos Secos & Castigados","900 ml",22900,"p32.jpg","Caviar","#1d1d1d"],"91":["Shampoo Cabellos Teñidos","900 ml",22900,"p34.jpg","Caviar","#1d1d1d"],"92":["Shampoo Cabellos Grasos","900 ml",22900,"p28.jpg","Caviar","#1d1d1d"],"93":["Shampoo Cabellos Normales","900 ml",22900,"p30.jpg","Caviar","#1d1d1d"],"94":["Conditioner Cabellos Secos & Castigados","900 ml",22900,"p15.jpg","Caviar","#1d1d1d"],"95":["Conditioner Cabellos Teñidos","900 ml",22900,"p17.jpg","Caviar","#1d1d1d"],"96":["Máscara Capilar Hidro-Nutritiva (En Estuche)","250 ml",9430,"p21.jpg","Caviar","#1d1d1d"],"97":["Máscara Capilar Hidro-Nutritiva","1000 ml",20360,"p20.jpg","Caviar","#1d1d1d"],"98":["Complejo Hidro-Nutrit. (Sin Enjuague) - Caja Amp.","12 x 15 ml",2100,"p19.jpg","Caviar","#1d1d1d"],"99":["Serum Reparador de Puntas Caviar","30 ml",23400,"p26.jpg","Caviar","#1d1d1d"],"101":["Conditioner Cabellos Normales","260 ml",8980,"","Caviar","#1d1d1d"],"103":["Crema de Peinado Multi-Acción (Sin Enjuague)","250 ml",7980,"","Caviar","#1d1d1d"],"104":["Crema de Peinado Lacios (Sin Enjuague)","250 ml",7980,"","Caviar","#1d1d1d"],"105":["Crema de Peinado Rulos (Sin Enjuague)","250 ml",7980,"","Caviar","#1d1d1d"],"106":["Crema de Peinado Teñidos (Sin Enjuague)","250 ml",7980,"","Caviar","#1d1d1d"],"107":["Protector Térmico Capilar Anti-Age","120 ml",21600,"","Caviar","#1d1d1d"],"108":["Shampoo Kill Frizz","230 ml",11120,"","Fidelité","#7b4bd1"],"109":["Shampoo Kill Frizz","900 ml",21780,"","Fidelité","#7b4bd1"],"110":["Máscara Capilar Kill Frizz","250 ml",16100,"","Fidelité","#7b4bd1"],"111":["Máscara Capilar Kill Frizz","500 ml",21780,"","Fidelité","#7b4bd1"],"112":["Loción Capilar Kill Frizz","120 ml",11320,"","Fidelité","#7b4bd1"],"113":["Shampoo FREE","230 ml",13500,"","Fidelité","#2aa6b8"],"114":["Shampoo FREE","900 ml",30250,"","Fidelité","#2aa6b8"],"115":["Acondicionador FREE","230 ml",13500,"","Fidelité","#2aa6b8"],"116":["Acondicionador FREE","900 ml",30250,"","Fidelité","#2aa6b8"],"117":["Crema de Peinar FREE","230 ml",10500,"","Fidelité","#2aa6b8"],"118":["Mascara Capilar FREE","1000 ml",30000,"","Fidelité","#2aa6b8"],"119":["Mascara Capilar FREE","250 ml",13300,"","Fidelité","#2aa6b8"],"120":["Ampolla Capilar FREE (cajita contiene 12 ampollas)","12 x 15 ml",3630,"","Fidelité","#2aa6b8"]}; /* id -> [nombre, tamaño, precio, foto, marca] */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const money=v=>'$'+Number(v||0).toLocaleString('es-AR');
+const rv=n=>(document.querySelector('input[name='+n+']:checked')||{}).value;
+let cart={};try{cart=JSON.parse(localStorage.getItem('hlc-cart2')||'{}')||{}}catch(e){}
+for(const k of Object.keys(cart)){if(!P[k]||!(cart[k]>0))delete cart[k]}
+const lines=Object.entries(cart).map(([id,n])=>({id:+id,p:P[id],n}));
+const total=lines.reduce((s,l)=>s+l.p[2]*l.n,0);
+const DATOS=['nombre','tel','mail','dir','loc'];
+try{const s=JSON.parse(localStorage.getItem('hlc-datos')||'{}');DATOS.forEach(k=>{if(s[k])$(k).value=s[k]});if(s.entrega)document.querySelector(`input[name=entrega][value=${s.entrega}]`)?.click();if(s.sucursal)$('sucursal').value=s.sucursal}catch(e){}
+const saveDatos=()=>{try{const o={entrega:rv('entrega'),sucursal:$('sucursal').value};DATOS.forEach(k=>o[k]=$(k).value);localStorage.setItem('hlc-datos',JSON.stringify(o))}catch(e){}};
+
+let step=1,doneUpTo=0;
+
+function thumb(p){return p[3]?`<img src="/img/${esc(p[3])}" alt="">`:`<span style="width:22px;height:34px;border-radius:6px;background:${esc(p[5]||'#b0009b')}"></span>`}
+function init(){
+  $('lines').innerHTML=lines.map(l=>`<div class="li"><div class="th">${thumb(l.p)}<b>${l.n}</b></div><span>${esc(l.p[0])}${l.p[1]?' · '+esc(l.p[1]):''}</span><em>${money(l.p[2]*l.n)}</em></div>`).join('');
+  $('sub').textContent=money(total);$('tot').textContent=money(total);$('mobTot').textContent=money(total);
+  go(1);syncEnt();
+}
+function go(s){
+  step=s;
+  for(const i of [1,2,3]){
+    const panel=$('p'+i),body=$('b'+i),sum=$('s'+i),chg=panel.querySelector('.chg');
+    body.hidden=i!==s;
+    const done=i<s||(i<=doneUpTo&&i!==s);
+    panel.classList.toggle('done',i<s);
+    if(sum){sum.hidden=!(i<s);if(i<s)sum.innerHTML=resumen(i)}
+    if(chg)chg.hidden=!(i<s);
+  }
+  document.querySelectorAll('.st').forEach(b=>{const n=+b.dataset.s;b.classList.toggle('done',n<s);b.classList.toggle('on',n===s)});
+  $('bar').style.width=((s-1)/2*66.8)+'%';
+  if(s===3)syncPago();
+  $('p'+s).scrollIntoView({block:'nearest',behavior:'smooth'});
+  const first=$('b'+s).querySelector('input:not([type=radio]),select');if(first&&!first.value&&matchMedia('(min-width:861px)').matches)first.focus({preventScroll:true});
+}
+function resumen(i){
+  if(i===1)return `${esc($('nombre').value)} · ${esc($('tel').value)}${$('mail').value?' · '+esc($('mail').value):''}`;
+  return rv('entrega')==='envio'?`Envío a ${esc($('dir').value)}, ${esc($('loc').value)} · se paga al recibir`:`Retiro en ${esc($('sucursal').value)}`;
+}
+function check(ids){let ok=true;for(const [id,test] of ids){const f=$('f-'+id),bad=!test($(id).value.trim());f.classList.toggle('bad',bad);f.querySelector('.err').hidden=!bad;if(bad&&ok){$(id).focus();ok=false}}return ok}
+const V1=[['nombre',v=>v.length>1],['tel',v=>v.replace(/\D/g,'').length>=8],['mail',v=>!v||/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)]];
+const V2=()=>rv('entrega')==='envio'?[['dir',v=>v.length>2],['loc',v=>v.length>1]]:[];
+document.addEventListener('click',e=>{
+  const n=e.target.closest('[data-next]');if(n){const s=+n.dataset.next;if(s===1&&!check(V1))return;if(s===2&&!check(V2()))return;saveDatos();doneUpTo=Math.max(doneUpTo,s);go(s+1);return}
+  const g=e.target.closest('[data-go],.st.done');if(g){go(+(g.dataset.go||g.dataset.s))}
+});
+const syncEnt=()=>{const env=rv('entrega')==='envio';$('boxEnvio').hidden=!env;$('boxRetiro').hidden=env;$('envLine').textContent=env?'Se paga al recibir':'Gratis (retiro)';$('efNote').textContent=env?'Pagás al recibir el envío.':'Pagás al retirar en la sucursal.'};
+const syncPago=()=>{const ef=rv('pago')==='efectivo';$('pay').textContent=ef?'Confirmar pedido':'Pagar '+money(total);$('payNote').textContent=ef?'Tu pedido queda registrado. No se cobra nada ahora.':'Te llevamos a Mercado Pago para pagar de forma segura y volvés acá con la confirmación.'};
+document.querySelectorAll('input[name=entrega]').forEach(r=>r.addEventListener('change',()=>{syncEnt();saveDatos()}));
+document.querySelectorAll('input[name=pago]').forEach(r=>r.addEventListener('change',syncPago));
+DATOS.forEach(k=>$(k).addEventListener('input',saveDatos));$('sucursal').addEventListener('change',saveDatos);
+$('mob').addEventListener('click',()=>{const o=$('aside').classList.toggle('open');$('mob').setAttribute('aria-expanded',o);$('mob').querySelector('span').textContent=o?'Ocultar resumen ▴':'Ver resumen del pedido ▾'});
+
+$('pay').addEventListener('click',async()=>{
+  const btn=$('pay');if(btn.disabled)return;
+  const ent=rv('entrega');
+  const body={items:lines.map(l=>({id:l.id,qty:l.n})),cliente:{nombre:$('nombre').value,telefono:$('tel').value,email:$('mail').value},
+    entrega:ent==='envio'?{tipo:'envio',direccion:$('dir').value,localidad:$('loc').value}:{tipo:'retiro',sucursal:$('sucursal').value},
+    pago:rv('pago'),nota:$('nota').value};
+  btn.disabled=true;btn.textContent='Procesando…';$('err').hidden=true;
+  try{
+    const r=await fetch('/api/pedidos',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'No pudimos registrar el pedido. Probá de nuevo.');
+    if(d.pagarEn){location.href=d.pagarEn;return}
+    location.href='/checkout/?pedido='+encodeURIComponent(d.id);
+  }catch(err){$('err').textContent=err.message;$('err').hidden=false;btn.disabled=false;syncPago()}
+});
+
+const EST={pagado:['¡Pago aprobado!','var(--ok)','✓','Recibimos tu pago. Te avisamos cuando el pedido esté listo.'],
+  pago_pendiente:['Pago pendiente','var(--warn)','…','Todavía no se acreditó el pago. Esta página se actualiza sola.'],
+  pago_en_revision:['Pago en revisión','var(--warn)','…','Mercado Pago está revisando el pago. Te avisamos cuando se apruebe.'],
+  pago_rechazado:['El pago no se aprobó','var(--bad)','!','Podés volver a intentarlo con otro medio de pago.'],
+  pago_cancelado:['Pago cancelado','var(--bad)','!','Podés hacer el pedido de nuevo cuando quieras.'],
+  efectivo_pendiente:['¡Pedido confirmado!','var(--ok)','✓','Lo pagás en efectivo al retirarlo o al recibirlo. Te contactamos para coordinar.'],
+  listo:['Pedido listo','var(--ok)','✓','Tu pedido está listo.'],enviado:['Pedido enviado','var(--ok)','✓','Tu pedido está en camino.'],
+  entregado:['Pedido entregado','var(--ok)','✓','¡Gracias por tu compra!'],cancelado:['Pedido cancelado','var(--bad)','!','Este pedido fue cancelado.']};
+async function resultado(id,intento=0){
+  let d=null;try{const r=await fetch('/api/pedido?id='+encodeURIComponent(id));if(r.ok)d=await r.json()}catch(e){}
+  const e=d?EST[d.estado]||EST.pago_pendiente:['No encontramos el pedido','var(--bad)','!','Si ya pagaste, guardá el comprobante de Mercado Pago y consultanos.'];
+  $('rIco').style.background=e[1];$('rIco').textContent=e[2];$('rTit').textContent=e[0];$('rMsg').textContent=e[3];
+  $('rId').textContent='Pedido '+id;$('rId').hidden=!d;$('rBox').hidden=!d;
+  if(d){$('rBox').innerHTML='<b>Detalle</b><ul>'+d.items.map(i=>`<li>${i.qty} × ${esc(i.nombre)}${i.tam?' '+esc(i.tam):''}</li>`).join('')+`</ul><p style="margin:10px 0 0"><b>Total productos: ${money(d.total)}</b><br>${d.entrega.tipo==='retiro'?'Retiro en '+esc(d.entrega.sucursal):'Envío a domicilio (el envío se paga al recibir)'}</p>`;
+    if(['pagado','pago_pendiente','pago_en_revision','efectivo_pendiente'].includes(d.estado)){try{localStorage.setItem('hlc-cart2','{}')}catch(x){}}
+    if(['pago_rechazado','pago_cancelado'].includes(d.estado)){$('rBox').insertAdjacentHTML('afterend','<a class="btn ghost" href="/checkout/" style="max-width:340px">Intentar de nuevo</a>')}
+    if(d.estado==='pago_pendiente'&&d.pago!=='efectivo'&&intento<6)setTimeout(()=>resultado(id,intento+1),4000);}
+}
+const pid=new URLSearchParams(location.search).get('pedido');
+if(pid){$('vRes').hidden=false;resultado(pid)}
+else if(!lines.length){$('vEmpty').hidden=false}
+else{$('vCo').hidden=false;init()}
+}
+</script>
+</body>
+</html>

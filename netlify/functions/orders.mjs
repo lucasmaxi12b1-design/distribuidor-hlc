@@ -63,9 +63,9 @@ export default async (req, context) => {
     external_reference: id,
     statement_descriptor: "DISTRIBUIDOR HLC",
     back_urls: {
-      success: `${origin}/?pedido=${id}`,
-      pending: `${origin}/?pedido=${id}`,
-      failure: `${origin}/?pedido=${id}`,
+      success: `${origin}/checkout/?pedido=${id}`,
+      pending: `${origin}/checkout/?pedido=${id}`,
+      failure: `${origin}/checkout/?pedido=${id}`,
     },
     auto_return: "approved",
     notification_url: `${origin}/api/mp-webhook`,
