@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pedidos HLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE work tool for the shop owner: clear, fast, nothing decorative
+   IDEA the order book behind the counter: one ticket per order, newest on top
+   PICTURE the live list of order tickets itself, with status colour on each
+   COLOUR white ground, HLC fuchsia for actions, green/amber/red only for payment state
+   TYPE Outfit 800 titles + Outfit text
+   LAYOUT top bar with counts and filters; tickets in a 2-column grid on laptop, one column on phone */
+:root{color-scheme:light dark;--bg:light-dark(#f7f3f6,#130910);--card:light-dark(#fff,#1d0c1a);--ink:light-dark(#1e0f1b,#f9eaf6);--soft:light-dark(#68536a,#c8b0c5);--line:light-dark(#ecd6e7,#45203f);--mag:light-dark(#b0009b,#ff5ef0);--ok:#1c9e50;--warn:#c98a00;--bad:#c0392b}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Outfit,system-ui,sans-serif}
+h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.01em}
+button,select,input{font:inherit}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:12px max(4vw,16px);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.top h1{font-size:22px;font-weight:800;margin-right:auto}
+.btn{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid var(--mag);background:var(--mag);color:#fff;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--mag)}
+.wrap{padding:20px max(4vw,16px);max-width:1240px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat b{display:block;font-size:26px;font-weight:800}
+.stat span{color:var(--soft);font-size:14px}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.filters button{flex:none;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#q{width:100%;min-height:44px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;margin-bottom:14px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
+.ord{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--warn);border-radius:16px;padding:16px;display:grid;gap:10px}
+.ord.ok{border-left-color:var(--ok)}.ord.bad{border-left-color:var(--bad)}.ord.done{opacity:.7}
+.oh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.oh h3{font-size:18px}
+.oh small{color:var(--soft)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;color:#fff;background:var(--warn)}
+.ok .badge{background:var(--ok)}.bad .badge{background:var(--bad)}
+.kv{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:4px 10px;font-size:15px}
+.kv dt{color:var(--soft)}.kv dd{margin:0;overflow-wrap:anywhere}
+.its{margin:0;padding:0;list-style:none;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:8px 0;font-size:15px}
+.its li{display:flex;justify-content:space-between;gap:10px}
+.its li span:last-child{white-space:nowrap}
+.tot{display:flex;justify-content:space-between;font-weight:800;font-size:18px}
+.act{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.act select{min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:0 10px;font-size:16px;flex:1}
+.act a{color:var(--mag);font-weight:600}
+.login{max-width:380px;margin:12vh auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;gap:14px}
+.login input{min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:0 14px;font-size:16px}
+.err{color:var(--bad);font-weight:600}
+.empty{padding:40px;text-align:center;color:var(--soft);border:1.5px dashed var(--line);border-radius:16px;grid-column:1/-1}
+</style>
+</head>
+<body>
+<div id="loginView" class="login">
+  <h1>Pedidos · Distribuidor HLC</h1>
+  <p>Ingresá la contraseña del panel.</p>
+  <input id="pass" type="password" autocomplete="current-password" aria-label="Contraseña">
+  <button class="btn" id="enter">Entrar</button>
+  <p class="err" id="lerr" hidden></p>
+</div>
+<div id="appView" hidden>
+  <div class="top"><h1>Pedidos</h1><span id="upd" class="small" style="color:var(--soft);font-size:14px"></span><button class="btn ghost" id="reload">Actualizar</button><button class="btn ghost" id="logout">Salir</button></div>
+  <div class="wrap">
+    <div class="stats" id="stats"></div>
+    <div class="filters" id="filters"></div>
+    <input id="q" type="search" placeholder="Buscar por nombre, teléfono o número de pedido" aria-label="Buscar">
+    <div class="list" id="list"></div>
+  </div>
+</div>
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const money=v=>'$'+Number(v||0).toLocaleString('es-AR');
+const EST={pago_pendiente:['Pago pendiente','warn'],pago_en_revision:['Pago en revisión','warn'],efectivo_pendiente:['Paga en efectivo','warn'],pagado:['Pagado','ok'],listo:['Listo para entregar','ok'],enviado:['Enviado','ok'],entregado:['Entregado','ok done'],pago_rechazado:['Pago rechazado','bad'],pago_cancelado:['Pago cancelado','bad'],devuelto:['Devuelto','bad'],cancelado:['Cancelado','bad done']};
+const MAN=['pago_pendiente','efectivo_pendiente','pagado','listo','enviado','entregado','cancelado'];
+const PAGO={tarjeta:'Tarjeta (Mercado Pago)',mercadopago:'Mercado Pago',efectivo:'Efectivo'};
+const FIL=[['activos','Para preparar',p=>['pagado','efectivo_pendiente','listo','enviado'].includes(p.estado)],['pend','Pago pendiente',p=>['pago_pendiente','pago_en_revision'].includes(p.estado)],['todos','Todos',()=>true],['fin','Entregados',p=>p.estado==='entregado'],['canc','Cancelados / rechazados',p=>['cancelado','pago_rechazado','pago_cancelado','devuelto'].includes(p.estado)]];
+let pass='',data=[],fil='activos',q='';
+try{pass=sessionStorage.getItem('hlc-admin')||''}catch(e){}
+async function api(method,body){const r=await fetch('/api/admin/pedidos',{method,headers:{'x-admin-pass':pass,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const d=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error(d.error||'Error'),{status:r.status});return d}
+async function load(){
+  try{const d=await api('GET');data=d.pedidos||[];$('loginView').hidden=true;$('appView').hidden=false;$('upd').textContent='Actualizado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});draw()}
+  catch(e){if(e.status===401||e.status===503){$('appView').hidden=true;$('loginView').hidden=false;if(pass){$('lerr').textContent=e.message;$('lerr').hidden=false}}else{alertBox(e.message)}}
+}
+function alertBox(m){$('list').innerHTML=`<div class="empty">${esc(m)}</div>`}
+function draw(){
+  const hoy=new Date().toDateString();
+  const n=f=>data.filter(f).length;
+  $('stats').innerHTML=[[n(FIL[0][2]),'para preparar'],[n(FIL[1][2]),'con pago pendiente'],[n(p=>new Date(p.creado).toDateString()===hoy),'pedidos de hoy'],[money(data.filter(p=>['pagado','listo','enviado','entregado'].includes(p.estado)).reduce((s,p)=>s+p.total,0)),'cobrado online + entregado']].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+  $('filters').innerHTML=FIL.map(([k,l,f])=>`<button data-f="${k}" aria-pressed="${k===fil}">${l} (${n(f)})</button>`).join('');
+  const f=FIL.find(x=>x[0]===fil)[2];const t=q.trim().toLowerCase();
+  const list=data.filter(f).filter(p=>!t||[p.id,p.cliente.nombre,p.cliente.telefono,p.cliente.email].join(' ').toLowerCase().includes(t));
+  $('list').innerHTML=list.length?list.map(card).join(''):'<div class="empty">No hay pedidos en esta lista.</div>';
+}
+function card(p){
+  const e=EST[p.estado]||[p.estado,'warn'];const tel=(p.cliente.telefono||'').replace(/\D/g,'');
+  const ent=p.entrega.tipo==='retiro'?'Retiro · '+esc(p.entrega.sucursal):'Envío · '+esc(p.entrega.direccion)+', '+esc(p.entrega.localidad);
+  const mp=p.mp&&p.mp.pagoId?`<dt>Mercado Pago</dt><dd>Op. ${esc(p.mp.pagoId)} · ${esc(p.mp.metodo||'')}${p.mp.cuotas>1?' · '+esc(p.mp.cuotas)+' cuotas':''} · ${money(p.mp.monto)}</dd>`:'';
+  return `<article class="ord ${e[1]}"><div class="oh"><h3>${esc(p.cliente.nombre)}</h3><span class="badge">${esc(e[0])}</span></div>
+  <small style="color:var(--soft)">${esc(p.id)} · ${new Date(p.creado).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small>
+  <dl class="kv"><dt>Teléfono</dt><dd><a href="tel:${esc(tel)}">${esc(p.cliente.telefono)}</a> · <a target="_blank" rel="noopener" href="https://wa.me/${tel.startsWith('54')?esc(tel):'549'+esc(tel)}">WhatsApp</a></dd>${p.cliente.email?`<dt>Email</dt><dd>${esc(p.cliente.email)}</dd>`:''}<dt>Entrega</dt><dd>${ent}</dd><dt>Pago</dt><dd>${esc(PAGO[p.pago]||p.pago)}</dd>${mp}${p.nota?`<dt>Aclaración</dt><dd>${esc(p.nota)}</dd>`:''}</dl>
+  <ul class="its">${p.items.map(i=>`<li><span>${i.qty} × ${esc(i.nombre)}${i.tam?' '+esc(i.tam):''}</span><span>${money(i.precio*i.qty)}</span></li>`).join('')}</ul>
+  <div class="tot"><span>Total productos</span><span>${money(p.total)}</span></div>
+  <div class="act"><select data-id="${esc(p.id)}" aria-label="Cambiar estado">${MAN.concat(MAN.includes(p.estado)?[]:[p.estado]).map(s=>`<option value="${s}" ${s===p.estado?'selected':''}>${esc((EST[s]||[s])[0])}</option>`).join('')}</select></div></article>`;
+}
+$('enter').addEventListener('click',()=>{pass=$('pass').value;try{sessionStorage.setItem('hlc-admin',pass)}catch(e){}$('lerr').hidden=true;load()});
+$('pass').addEventListener('keydown',e=>{if(e.key==='Enter')$('enter').click()});
+$('logout').addEventListener('click',()=>{pass='';try{sessionStorage.removeItem('hlc-admin')}catch(e){}$('appView').hidden=true;$('loginView').hidden=false;$('pass').value=''});
+$('reload').addEventListener('click',load);
+$('filters').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){fil=b.dataset.f;draw()}});
+$('q').addEventListener('input',e=>{q=e.target.value;draw()});
+$('list').addEventListener('change',async e=>{const s=e.target.closest('select[data-id]');if(!s)return;s.disabled=true;try{const d=await api('POST',{id:s.dataset.id,estado:s.value});data=data.map(p=>p.id===d.pedido.id?d.pedido:p);draw()}catch(err){s.disabled=false;alertBox(err.message)}});
+setInterval(()=>{if(pass&&!$('appView').hidden&&!document.hidden)load()},60000);
+if(pass)load();
+}
+</script>
+</body>
+</html>

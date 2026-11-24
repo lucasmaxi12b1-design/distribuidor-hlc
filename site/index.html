@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribuidor HLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday shop, warm and clear, a beauty supply counter
+   IDEA the salon supply shelf under the HLC sign: fuchsia on black, like the logo
+   PICTURE black hero with the HLC logo and a lit shelf of drawn bottles, tubes and jars in each line's colour
+   COLOUR white ground, logo fuchsia dominant, black hero band, WhatsApp green only for ordering
+   TYPE Outfit 800 display + Outfit text
+   LAYOUT laptop: logo + title over full-width shelf, lines strip, catalog grid with sticky cart; phone: logo, title, shelf, filters, products */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#130910);--ink:light-dark(#1e0f1b,#f9eaf6);--soft:light-dark(#68536a,#c8b0c5);--mag:light-dark(#b0009b,#ff5ef0);--magd:light-dark(#7d006f,#ff9af6);--blush:light-dark(#fbe6f8,#2a1027);--line:light-dark(#eed2ea,#45203f);--card:light-dark(#ffffff,#1d0c1a);--wa:#1c9e50;--night:#0b0509}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+html{scroll-padding-top:76px;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Outfit,system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding-block:clamp(32px,5vw,72px);padding-inline:max(5vw,16px)}
+h1,h2,h3{line-height:1.05;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,5vw,52px);font-weight:800}
+h2{font-size:clamp(28px,3.6vw,40px);font-weight:800}
+h3{font-size:17px;font-weight:600;line-height:1.2}
+p{margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--mag);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;border:2px solid var(--mag);background:var(--mag);color:#fff;font-weight:600;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--magd);border-color:var(--magd)}
+.btn.ghost{background:transparent;color:var(--mag)}
+.btn.ghost:hover{background:var(--blush)}
+.btn.wa{background:var(--wa);border-color:var(--wa)}
+.btn.wa:hover{filter:brightness(.92)}
+nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px max(5vw,16px)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:20px;margin-right:auto}
+.logo img{width:42px;height:42px}
+.links{display:flex;gap:4px;flex-wrap:wrap}
+.links a{padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:500}
+.links a:hover{background:var(--blush)}
+.cartbtn b{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:999px;background:#fff;color:var(--mag);font-size:13px}
+.hero{background:var(--night);color:#fbeefa}
+.hero .wrap{display:grid;gap:28px}
+.htop{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr) auto;gap:32px;align-items:center}
+.hlogo{width:100%;max-width:300px}
+.lead{font-size:18px;color:#dcc4d8;max-width:34em;margin-top:14px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tags span{padding:6px 12px;border-radius:999px;border:1px solid #5a2a52;font-size:14px;font-weight:500}
+.hcta{display:flex;flex-direction:column;gap:10px}
+.hero .btn{--mag:#e000c8;--magd:#ff4ae8}
+.hero .btn.ghost{color:#ff8af2;border-color:#ff8af2}
+.hero .btn.ghost:hover{background:#2a0f26}
+.shelf{position:relative;border-radius:22px;background:linear-gradient(180deg,#ffffff 40%,#f6e3f2);padding:34px 24px 0;overflow:hidden;min-height:240px;display:flex;flex-direction:column;justify-content:flex-end}
+.shelf::before{content:"";position:absolute;inset:0 0 auto;height:10px;background:linear-gradient(90deg,#e000c8,#ff8af2)}
+.row{position:relative;display:flex;align-items:flex-end;justify-content:center;gap:clamp(6px,2vw,26px)}
+.row{--k:1}
+.row img{flex:none;width:auto;mix-blend-mode:multiply}
+.board{position:relative;height:18px;margin:0 -24px;background:linear-gradient(#e9c6e1,#b77aa9);box-shadow:0 8px 0 rgba(0,0,0,.35)}
+@media(prefers-reduced-motion:no-preference){.row img{animation:rise .7s cubic-bezier(.2,.9,.3,1.2) both}}
+@keyframes rise{from{transform:translateY(40px);opacity:0}}
+.lines{background:var(--blush)}
+.lines .wrap{display:grid;gap:18px}
+.lhead{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.fid{display:grid;font:500 30px/1 Georgia,"Times New Roman",serif;letter-spacing:.04em;text-align:center}
+.fid small{font:500 11px/1.6 Outfit,sans-serif;letter-spacing:.18em;text-transform:uppercase;border-top:1px solid currentColor;margin-top:4px}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
+.line{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;text-align:left;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.line:hover{border-color:var(--mag)}
+.line i{grid-row:span 2;width:14px;height:44px;border-radius:7px}
+.line b{font-size:18px}
+.line span{font-size:14px;color:var(--soft)}
+.shop .wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start}
+.shead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.note{font-size:13px;color:var(--soft)}
+.tools{display:grid;gap:10px;margin-bottom:20px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.chip{flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:500}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#q{width:100%;min-height:46px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.prod{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.pic{display:grid;place-items:center;height:150px;background:var(--blush)}
+.pic.ph{background:#fff;padding:8px}
+.pic img{max-height:134px;width:auto;max-width:100%;object-fit:contain}
+.new{position:absolute;top:10px;left:10px;padding:2px 10px;border-radius:999px;background:var(--mag);color:#fff;font-size:13px;font-weight:600}
+.pbody{display:flex;flex-direction:column;gap:5px;padding:14px;flex:1}
+.cat{font-size:13px;color:var(--mag);font-weight:600}
+.cont{font-size:14px;color:var(--soft);flex:1}
+.pfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;flex-wrap:wrap}
+.price{font-weight:800;font-size:18px;white-space:nowrap}
+.price small{font-weight:500;font-size:13px;color:var(--soft)}
+.price.ask{font-size:15px;font-weight:600;color:var(--soft)}
+.add{min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:0;background:var(--mag);color:#fff;font-weight:600}
+.add:hover{background:var(--magd)}
+.more{display:flex;justify-content:center;margin-top:20px}
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--soft);border:1.5px dashed var(--line);border-radius:18px}
+.cart{position:sticky;top:84px;border:1px solid var(--line);border-radius:20px;background:var(--card);padding:20px;display:grid;gap:14px}
+.cart h3{font-size:22px;font-weight:800}
+.items{display:grid;gap:10px;max-height:320px;overflow:auto}
+.it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.it span{font-size:15px;font-weight:500}
+.it em{font-style:normal;font-weight:600;white-space:nowrap;text-align:right}
+.qty{display:flex;align-items:center;gap:4px}
+.qty button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-weight:600}
+.qty b{min-width:26px;text-align:center}
+.qty .rm{margin-left:6px;width:auto;border:0;padding:0 6px;color:var(--soft);font-size:14px;text-decoration:underline}
+.total{display:flex;justify-content:space-between;font-size:20px;font-weight:800}
+label{font-weight:600;font-size:15px}
+select,textarea{width:100%;margin-top:6px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.cart .btn{width:100%}
+.cart .btn:disabled{opacity:.45;cursor:not-allowed}
+.cart .btn.busy{opacity:.7;cursor:progress}
+.ask-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--mag);color:var(--mag);font-weight:600;text-decoration:none;white-space:nowrap}
+#okdlg{width:min(560px,calc(100vw - 24px));border:0;border-radius:22px;padding:28px;background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+#okdlg::backdrop{background:rgba(20,5,18,.6)}
+#okdlg h2{font-size:28px;margin-bottom:10px}
+#okdlg .oid{font-weight:700;font-size:15px;padding:6px 12px;border-radius:999px;background:var(--blush);display:inline-block;margin:10px 0}
+#okdlg ul{padding-left:20px;margin:10px 0}
+.okico{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff;margin-bottom:12px}
+.small{font-size:13px;color:var(--soft)}
+.about .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
+.about .txt p{font-size:17px;margin-top:14px}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fact{padding:20px;border-radius:18px;background:var(--blush)}
+.fact b{display:block;font-size:22px;margin-bottom:4px}
+.fact span{font-size:15px;color:var(--soft)}
+.pros{background:var(--mag);color:#fff}
+.pros .wrap{display:grid;gap:24px}
+.pros p{opacity:.92;font-size:17px;max-width:40em}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;gap:10px;padding:22px;border-radius:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);text-decoration:none}
+.tile:hover{background:rgba(255,255,255,.2)}
+.tile h3{font-size:21px}
+.tile span{font-size:15px;opacity:.9;flex:1}
+.tile u{font-weight:600}
+.contact .wrap{display:grid;gap:18px}
+.locs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.cbox{padding:20px;border:1px solid var(--line);border-radius:18px;display:grid;gap:4px;align-content:start}
+.cbox h3{color:var(--mag);font-size:15px}
+.cbox b{font-size:19px}
+.cbox span{color:var(--soft);white-space:nowrap}
+.crow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+footer{background:var(--night);color:#dcc4d8;padding:24px max(5vw,16px);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+.prod h3 a{color:inherit;text-decoration:none}
+.prod h3 a:hover{color:var(--mag)}
+.prod .pic{cursor:pointer}
+.more-info{background:none;border:0;padding:0;color:var(--mag);font-weight:600;font-size:14px;text-align:left;text-decoration:underline;min-height:32px}
+dialog#ficha{width:min(920px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:0;border:0;border-radius:22px;background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+dialog#ficha::backdrop{background:rgba(20,5,18,.6);backdrop-filter:blur(3px)}
+.fwrap{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr)}
+.fimg{display:grid;place-items:center;background:#fff;padding:24px;min-height:320px}
+.fimg img{max-height:380px;width:auto}
+.fimg.draw{background:var(--blush)}
+.fbody{padding:28px;display:grid;gap:14px;align-content:start;overflow:auto;max-height:calc(100dvh - 24px)}
+.fbody h2{font-size:clamp(24px,3vw,32px)}
+.fmeta{display:flex;flex-wrap:wrap;gap:8px}
+.fmeta span{padding:4px 12px;border-radius:999px;background:var(--blush);font-size:14px;font-weight:500}
+.fprice{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.fprice .price{font-size:26px}
+.fbody h3{font-size:18px;margin-top:6px}
+.fbody p{font-size:16px}
+.steps{margin:0;padding-left:22px;display:grid;gap:8px}
+.steps li{padding-left:4px}
+.steps li.warn{list-style:none;margin-left:-22px;padding:12px 14px;border-radius:12px;background:light-dark(#fff4d6,#3a2a05);border:1px solid light-dark(#f0d48a,#6b5212);font-size:15px}
+.sizes{display:flex;flex-wrap:wrap;gap:6px}
+.sizes button{min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:500}
+.sizes button[aria-pressed=true]{border-color:var(--mag);color:var(--mag)}
+.fclose{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);font-size:22px;line-height:1;z-index:2}
+.src{font-size:13px;color:var(--soft)}
+@media(max-width:700px){.fwrap{grid-template-columns:minmax(0,1fr)}.fimg{min-height:220px;padding:16px}.fimg img{max-height:220px}.fbody{padding:20px;max-height:none}dialog#ficha{overflow:auto}}
+input[type=text],input[type=tel],input[type=email]{width:100%;margin-top:6px;padding:10px 12px;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.opts{border:0;margin:0;padding:0;display:grid;gap:8px}
+.opts legend{font-weight:600;font-size:15px;margin-bottom:8px;padding:0}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-weight:400}
+.opt:has(input:checked){border-color:var(--mag);background:var(--blush)}
+.opt input{accent-color:var(--mag);width:18px;height:18px;margin:2px 0 0;flex:none}
+.opt span{display:grid}
+.opt b{font-size:15px}
+.opt small{font-size:13px;color:var(--soft)}
+.warnmsg{color:light-dark(#a3122b,#ff8a9c);font-weight:600}
+.pays{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:6px}
+.pay{padding:20px;border-radius:18px;border:1px solid var(--line);display:grid;gap:6px;align-content:start}
+.pay b{font-size:18px}
+.pay span{color:var(--soft);font-size:15px}
+@media(max-width:900px){.pays{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.pays{grid-template-columns:minmax(0,1fr)}}
+.mbar{display:none}
+@media(max-width:980px){.shop .wrap{grid-template-columns:minmax(0,1fr)}.cart{position:static}.htop{grid-template-columns:minmax(0,220px) minmax(0,1fr)}.hcta{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}.locs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.htop,.about .wrap{grid-template-columns:minmax(0,1fr)}.hlogo{max-width:220px}.three{grid-template-columns:minmax(0,1fr)}.links{display:none}}
+@media(max-width:600px){.row{--k:.62}.pic img{max-height:96px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pic{height:110px}.pbody{padding:10px}.pfoot{flex-direction:column;align-items:stretch}.facts,.locs{grid-template-columns:minmax(0,1fr)}.shelf{min-height:180px;padding-inline:12px}.board{margin-inline:-12px}.mbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;justify-content:space-between;align-items:center;gap:8px;padding:8px 8px 8px 18px;border-radius:999px;background:var(--ink);color:var(--bg);box-shadow:0 8px 24px rgba(0,0,0,.3)}.mbar[hidden]{display:none}body{padding-bottom:80px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#inicio"><img src="img/icon.png" alt="">Distribuidor HLC</a>
+    <div class="links">
+      <a href="#tienda">Tienda</a>
+      <a href="#lineas">Líneas</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#pagos">Pagos y envíos</a>
+      <a href="#locales">Locales</a>
+    </div>
+    <a class="btn cartbtn" href="#carrito">Carrito <b id="count">0</b></a>
+  </div>
+</nav>
+
+<header class="hero band" id="inicio">
+  <div class="wrap">
+    <div class="htop">
+      <img class="hlogo" src="img/logo.png" alt="Distribuidor HLC, artículos de belleza">
+      <div>
+        <h1>Productos profesionales para tu pelo y tu salón</h1>
+        <p class="lead">Distribuidor oficial Fidelité en Misiones. Coloración, tratamientos, shampoo, styling y las líneas Argán, Caviar, Kill Frizz y Free, con buena atención y precios competitivos.</p>
+        <div class="tags"><span>4 locales en Posadas y Oberá</span><span>Mayorista y minorista</span><span>Pagás online o en efectivo</span></div>
+      </div>
+      <div class="hcta">
+        <a class="btn" href="#tienda">Ver productos</a>
+        <a class="btn ghost" href="#profesionales">Soy peluquero/a</a>
+      </div>
+    </div>
+    <div class="shelf" aria-hidden="true">
+      <div class="row" id="shelfRow"></div>
+      <div class="board"></div>
+    </div>
+  </div>
+</header>
+
+<section class="lines band" id="lineas">
+  <div class="wrap">
+    <div class="lhead">
+      <h2>Las líneas Fidelité</h2>
+      <span class="fid">FIDELITÉ<small>Premium hair cosmetics</small></span>
+    </div>
+    <p style="max-width:44em;font-size:17px">Fidelité es una empresa argentina dedicada a crear e innovar en cosmética capilar, con productos de uso profesional y de reventa en salones. Tocá una línea para ver sus productos.</p>
+    <div class="lgrid" id="lgrid"></div>
+  </div>
+</section>
+
+<section class="shop band" id="tienda">
+  <div class="wrap">
+    <div>
+      <div class="shead">
+        <h2>Tienda</h2>
+        <span class="note">Precios al público, lista octubre 2026. Sujetos a stock.</span>
+      </div>
+      <div class="tools">
+        <input id="q" type="search" placeholder="Buscar: keratina, revelador 20 vol, argán…" aria-label="Buscar producto">
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="more"><button class="btn ghost" id="moreBtn" hidden>Ver más productos</button></div>
+    </div>
+    <aside class="cart" id="carrito" aria-label="Carrito">
+      <h3>Tu pedido</h3>
+      <div class="items" id="items"></div>
+      <div class="total"><span>Total</span><span id="total">$0</span></div>
+      <div>
+        <label for="nombre">Tu nombre</label>
+        <input id="nombre" type="text" autocomplete="name" placeholder="Ej.: Laura Gómez">
+      </div>
+      <div>
+        <label for="tel">Teléfono</label>
+        <input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ej.: 3765 123456">
+      </div>
+      <div>
+        <label for="mail">Email (opcional)</label>
+        <input id="mail" type="email" autocomplete="email" placeholder="Para el comprobante de pago">
+      </div>
+      <fieldset class="opts" id="entrega">
+        <legend>¿Cómo lo recibís?</legend>
+        <label class="opt"><input type="radio" name="entrega" value="retiro" checked><span><b>Retiro en sucursal</b><small>Sin costo</small></span></label>
+        <label class="opt"><input type="radio" name="entrega" value="envio"><span><b>Envío a domicilio</b><small>El envío se paga al recibir</small></span></label>
+      </fieldset>
+      <div id="boxRetiro">
+        <label for="sucursal">Sucursal</label>
+        <select id="sucursal">
+          <option>Local 1 · Mitre 2470, Posadas</option>
+          <option>Local 3 · Buenos Aires 1556, Posadas</option>
+          <option>Local 4 · Itaembé Guazú, Posadas</option>
+          <option>Local 2 · Jujuy 114, Oberá</option>
+        </select>
+      </div>
+      <div id="boxEnvio" hidden>
+        <label for="dir">Dirección</label>
+        <input id="dir" type="text" autocomplete="street-address" placeholder="Calle, número, piso/depto">
+        <label for="loc" style="display:block;margin-top:10px">Localidad</label>
+        <input id="loc" type="text" autocomplete="address-level2" placeholder="Ej.: Posadas">
+        <p class="small" style="margin-top:6px">En la página pagás solo los productos. El costo del envío se abona al recibir y depende de la zona.</p>
+      </div>
+      <fieldset class="opts" id="pago">
+        <legend>¿Cómo pagás?</legend>
+        <label class="opt"><input type="radio" name="pago" value="tarjeta" checked><span><b>Tarjeta de crédito o débito</b><small>Pago seguro con Mercado Pago, en cuotas si tu tarjeta lo permite</small></span></label>
+        <label class="opt"><input type="radio" name="pago" value="mercadopago"><span><b>Mercado Pago</b><small>Con tu dinero en cuenta o tarjetas guardadas</small></span></label>
+        <label class="opt"><input type="radio" name="pago" value="efectivo"><span><b>Efectivo</b><small id="efNote">Al retirar en la sucursal</small></span></label>
+      </fieldset>
+      <div>
+        <label for="nota">Aclaraciones (opcional)</label>
+        <textarea id="nota" rows="2" placeholder="Ej.: horario para recibir, tono de tintura…"></textarea>
+      </div>
+      <p class="small warnmsg" id="falta" hidden></p>
+      <button class="btn" id="send" type="button" disabled>Ir a pagar</button>
+      <p class="small" id="sendNote">Vas a pagar en la pantalla segura de Mercado Pago y volvés a la tienda con la confirmación.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="about band" id="nosotros">
+  <div class="wrap">
+    <div class="txt">
+      <h2>Sobre nosotros</h2>
+      <p>Somos Distribuidor HLC, distribuidor oficial de Fidelité en Misiones. Acercamos productos profesionales de coloración, tratamiento, lavado y styling a peluquerías, revendedores y a quienes los usan en casa.</p>
+      <p>Tenemos cuatro locales, en Posadas, Itaembé Guazú y Oberá, y trabajamos con un objetivo simple: buena atención y precios competitivos, para que cada cliente encuentre lo que necesita y vuelva.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>Distribuidor oficial</b><span>Productos Fidelité, Colormaster y Caviar originales</span></div>
+      <div class="fact"><b>4 locales</b><span>Posadas, Itaembé Guazú y Oberá</span></div>
+      <div class="fact"><b id="nprod">+100 productos</b><span>De la coloración al styling</span></div>
+      <div class="fact"><b>Para todos</b><span>Salones, mayoristas y consumo personal</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="pros band" id="profesionales">
+  <div class="wrap">
+    <h2>¿Cómo querés comprar?</h2>
+    <p>Elegí tu opción y escribinos. Te pasamos precios y condiciones según tu tipo de compra.</p>
+    <div class="three">
+      <a class="tile" target="_blank" rel="noopener" href="https://wa.me/5493765112650?text=Hola!%20Soy%20peluquero%2Fa%20y%20quiero%20hacer%20un%20pedido%20para%20mi%20sal%C3%B3n.%20%C2%BFMe%20pasan%20precios%3F"><h3>Soy peluquero/a</h3><span>Reponé lo que usás en tu salón con precios para profesionales.</span><u>Pedir precios de salón</u></a>
+      <a class="tile" target="_blank" rel="noopener" href="https://wa.me/5493765112650?text=Hola!%20Quiero%20consultar%20precios%20y%20condiciones%20para%20compra%20mayorista."><h3>Compra mayorista</h3><span>Para revendedores y comercios: consultá cajas cerradas y condiciones.</span><u>Consultar condiciones</u></a>
+      <a class="tile" target="_blank" rel="noopener" href="https://wa.me/5493765112650?text=Hola!%20Quiero%20consultar%20productos%20y%20precios%20para%20consumo%20personal."><h3>Consumo personal</h3><span>Los productos de salón para cuidar tu pelo en casa.</span><u>Consultar productos</u></a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="pagos">
+  <div class="wrap">
+    <h2>Pagos y entregas</h2>
+    <div class="pays">
+      <div class="pay"><b>Tarjeta de crédito o débito</b><span>Pagás en la pantalla segura de Mercado Pago, en cuotas si tu tarjeta lo permite.</span></div>
+      <div class="pay"><b>Mercado Pago</b><span>Con el dinero de tu cuenta o tus tarjetas guardadas.</span></div>
+      <div class="pay"><b>Efectivo</b><span>Confirmás el pedido en la página y pagás al retirar en la sucursal o al recibir el envío.</span></div>
+      <div class="pay"><b>Envío o retiro</b><span>Retirás gratis en cualquiera de los 4 locales o te lo enviamos a domicilio. El envío se paga al recibir.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact band" id="locales">
+  <div class="wrap">
+    <h2>Locales y contacto</h2>
+    <p style="font-size:17px;max-width:44em">Hacé tu pedido o consulta por WhatsApp y te atendemos personalmente.</p>
+    <div class="locs">
+      <div class="cbox"><h3>Local 1 · Posadas</h3><b>Mitre 2470</b></div>
+      <div class="cbox"><h3>Local 2 · Oberá</h3><b>Jujuy 114</b></div>
+      <div class="cbox"><h3>Local 3 · Posadas</h3><b>Buenos Aires 1556</b></div>
+      <div class="cbox"><h3>Local 4 · Itaembé Guazú</h3><b>Posadas</b></div>
+    </div>
+    <div class="crow">
+      <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/5493765112650">Pedidos y consultas por WhatsApp: +54 9 3765 11-2650</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Distribuidor HLC · Artículos de belleza · Distribuidor oficial Fidelité</span><span>Posadas y Oberá, Misiones</span></div></footer>
+
+<dialog id="okdlg" aria-labelledby="oktit"><div class="okico" id="okico">✓</div><h2 id="oktit"></h2><p id="okmsg"></p><span class="oid" id="okid"></span><ul id="okitems"></ul><button class="btn" id="okclose" style="width:100%;margin-top:8px">Seguir comprando</button></dialog>
+<dialog id="ficha" aria-labelledby="fname"><button class="fclose" id="fclose" aria-label="Cerrar">×</button><div class="fwrap"><div class="fimg" id="fimg"></div><div class="fbody"><div class="fmeta" id="fmeta"></div><h2 id="fname"></h2><div class="sizes" id="fsizes"></div><div class="fprice"><span id="fprice"></span><button class="add" id="fadd">Agregar al pedido</button></div><h3>Descripción</h3><p id="fdesc"></p><div id="fmodo"></div><p class="src">Información basada en la ficha del fabricante. Ante cualquier duda, consultanos por WhatsApp.</p></div></div></dialog>
+<div class="mbar" id="mbar" hidden><span id="mtxt">0 productos</span><a class="btn" href="#carrito">Ver pedido</a></div>
+
+<script>
+{
+const WA='5493765112650';
+const LINES=[["Coloración", "Tinturas Colormaster y Caviar, reveladores y decolorante", "#d62839"], ["Tratamientos", "Máscaras, ampollas y Bubble Shock", "#e0679f"], ["Styling", "Geles, pastas, reparadores y protección", "#2b6fd6"], ["Argán", "Línea Mythical con aceite de argán", "#c8902a"], ["Caviar", "Línea premium por tipo de cabello", "#1d1d1d"], ["Kill Frizz", "Shampoo, máscara y loción antifrizz", "#7b4bd1"], ["Free", "Shampoo, acondicionador, máscara y ampollas", "#2aa6b8"], ["Shampoo y acondicionador", "Colormaster, Keratina y correctores de tono", "#c2189a"]];
+const P=[["Miracle Retouch","Fidelité","100 ml","Coloración","tube","#d62839",19990,0,0,"p35.jpg","miracle"],["Revelador en Crema Perfumado - 10 Vol.","Colormaster","990 ml","Coloración","bottle","#d62839",8650,0,0,"p36.jpg","revelador_cm"],["Revelador en Crema Perfumado - 20 Vol.","Colormaster","990 ml","Coloración","bottle","#d62839",8900,0,0,"p37.jpg","revelador_cm"],["Revelador en Crema Perfumado - 30 Vol.","Colormaster","990 ml","Coloración","bottle","#d62839",10400,0,0,"p38.jpg","revelador_cm"],["Revelador en Crema Perfumado - 40 Vol.","Colormaster","990 ml","Coloración","bottle","#d62839",10550,0,0,"p39.jpg","revelador_cm"],["Revelador Caviar Color Cream - 10 Vol.","Caviar","900 ml","Coloración","bottle","#1d1d1d",8750,0,0,"p22.jpg","revelador_caviar"],["Revelador Caviar Color Cream - 20 Vol.","Caviar","900 ml","Coloración","bottle","#1d1d1d",9300,0,0,"p23.jpg","revelador_caviar"],["Revelador Caviar Color Cream - 30 Vol.","Caviar","900 ml","Coloración","bottle","#1d1d1d",9920,0,0,"p24.jpg","revelador_caviar"],["Revelador Caviar Color Cream - 40 Vol.","Caviar","900 ml","Coloración","bottle","#1d1d1d",10400,0,0,"p25.jpg","revelador_caviar"],["Tintura en Crema - 1 + 1 1/2","Colormaster","60 g","Coloración","tube","#d62839",3900,0,0,"","tintura_cm"],["Tintura en Crema - NON AMMONIA VEGANA","Non ammonia","60 g","Coloración","tube","#3a9d5d",4950,0,1,"","tintura_na"],["Carta de Colores Nueva Edición (108 tonos + 6 Color Express)","Colormaster","","Coloración","box","#d62839",0,0,0,"","carta_cm"],["Carta de Colores NON AMMONIA","Colormaster","","Coloración","box","#d62839",0,0,0,"","carta_na"],["Quitamanchas","Colormaster","125 ml","Coloración","bottle","#d62839",4200,0,0,"","quitamanchas"],["Color Express - Coloración Instantánea sin Amoníaco","Colormaster","3 x 30 ml","Coloración","box","#d62839",4300,1,0,"","color_express"],["Revelador en Crema Perfumado - 20 Vol.","Colormaster","90 ml","Coloración","bottle","#d62839",2530,0,1,"","revelador_cm"],["Revelador en Crema Perfumado - 30 Vol.","Colormaster","90 ml","Coloración","bottle","#d62839",2530,0,1,"","revelador_cm"],["Polvo Decolorante NUEVA FORMULA - LIGHTING POWER doypack","Colormaster","700 g","Coloración","jar","#d62839",0,0,0,"","decolorante"],["Tintura en Crema Caviar - Caviar Color Cream 30 Tonos","Caviar","60 g","Coloración","tube","#1d1d1d",5720,0,0,"","tintura_caviar"],["Carta de Colores - Caviar Color Cream 30 Tonos","Caviar","","Coloración","box","#1d1d1d",0,0,0,"","carta_caviar"],["Revelador en crema NON AMMONIA - 8 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",8100,0,1,"","revelador_na"],["Revelador en crema NON AMMONIA - 10 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",8300,0,0,"","revelador_na"],["Revelador en crema NON AMMONIA - 15 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",8600,0,0,"","revelador_na"],["Revelador en crema NON AMMONIA - 20 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",8850,0,0,"","revelador_na"],["Revelador en crema NON AMMONIA - 30 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",9500,0,0,"","revelador_na"],["Revelador en crema NON AMMONIA - 40 Vol.","Non ammonia","900 ml","Coloración","bottle","#3a9d5d",9990,0,0,"","revelador_na"],["Shampoo Cremoso Neutro","Colormaster","5000 ml","Shampoo y acondicionador","bottle","#c2189a",35200,0,0,"","shampoo_neutro"],["Acondicionador Cremoso Acido","Colormaster","5000 ml","Shampoo y acondicionador","bottle","#c2189a",35200,0,0,"","acond_acido"],["Shampoo Cremoso Neutro","Colormaster","1000 ml","Shampoo y acondicionador","bottle","#c2189a",11550,0,0,"","shampoo_neutro"],["Acondicionador Cremoso Acido","Colormaster","1000 ml","Shampoo y acondicionador","bottle","#c2189a",11550,0,0,"","acond_acido"],["Shampoo Extra Ácido Colormaster","Colormaster","1000 ml","Shampoo y acondicionador","bottle","#c2189a",11800,0,0,"","shampoo_extra_acido"],["Shampoo de Keratina en Pomo","Fidelité","230 ml","Shampoo y acondicionador","tube","#c2189a",5700,0,0,"","shampoo_keratina"],["Acondicionador de Keratina en Pomo","Fidelité","230 ml","Shampoo y acondicionador","tube","#c2189a",5700,0,0,"","acond_keratina"],["Shampoo de Keratina ¡Re-Lanzamiento!","Fidelité","900 ml","Shampoo y acondicionador","bottle","#c2189a",16600,0,0,"","shampoo_keratina"],["Acondicionador de Keratina ¡Re-Lanzamiento!","Fidelité","900 ml","Shampoo y acondicionador","bottle","#c2189a",16600,0,0,"","acond_keratina"],["Shampoo Corrector para Neutralizar Rubios","Fidelité","230 ml","Shampoo y acondicionador","bottle","#6b3fa0",6600,0,0,"","shampoo_corrector"],["Acondicionador Corrector para Neutralizar Tonos Dorados 7/9","Fidelité","230 ml","Shampoo y acondicionador","bottle","#6b3fa0",6600,0,0,"","acond_corrector_79"],["Acondicionador Corrector para Realzar Plateados 10+","Fidelité","230 ml","Shampoo y acondicionador","bottle","#6b3fa0",6600,0,0,"","acond_corrector_10"],["Shampoo Corrector para Neutralizar Rubios","Fidelité","900 ml","Shampoo y acondicionador","bottle","#6b3fa0",16900,0,0,"","shampoo_corrector"],["Shampoo Ultra Black (gris platino)","Fidelité","230 ml","Shampoo y acondicionador","bottle","#3a3a3a",6900,0,0,"","shampoo_ultrablack"],["Shampoo Extra Ácido","Colormaster","230 ml","Shampoo y acondicionador","bottle","#c2189a",5700,0,0,"","shampoo_extra_acido"],["Shampoo Cremoso Neutro","Colormaster","230 ml","Shampoo y acondicionador","bottle","#c2189a",5700,0,0,"","shampoo_neutro"],["Acondicionador Cremoso Ácido","Colormaster","230 ml","Shampoo y acondicionador","bottle","#c2189a",5700,0,0,"","acond_acido"],["Shampoo Extra Acido","Colormaster","5000 ml","Shampoo y acondicionador","bottle","#c2189a",37400,0,0,"","shampoo_extra_acido"],["Cofre de Perfección 12 Unid. x 20 gr","Fidelité","12 x 20 g","Tratamientos","box","#e0679f",2970,1,0,"p18.jpg","bubble"],["Crema Extra Ácida pH3,5 D-Pantenol","Colormaster","1000 g","Tratamientos","jar","#e0679f",17700,0,0,"","crema_extra_acida"],["Crema Extra Ácida pH3,5 D-Pantenol","Colormaster","270 g","Tratamientos","jar","#e0679f",6490,0,0,"","crema_extra_acida"],["Máscara Capilar Keratina","Fidelité","1000 g","Tratamientos","jar","#e0679f",17700,0,0,"","mascara_keratina"],["Máscara Capilar Keratina","Fidelité","270 g","Tratamientos","jar","#e0679f",6490,0,0,"","mascara_keratina"],["Máscara Capilar Almendras","Fidelité","1000 g","Tratamientos","jar","#e0679f",17700,0,0,"","mascara_almendras"],["Máscara Capilar Almendras","Fidelité","270 g","Tratamientos","jar","#e0679f",6490,0,0,"","mascara_almendras"],["Máscara Capilar Coco & Vainilla","Fidelité","1000 g","Tratamientos","jar","#e0679f",17700,0,0,"","mascara_coco"],["Máscara Capilar Coco & Vainilla","Fidelité","270 g","Tratamientos","jar","#e0679f",6490,0,0,"","mascara_coco"],["Semilla de Lino Reestruct. (Caja Amp.)","Fidelité","12 x 15 ml","Tratamientos","amp","#e0679f",2600,1,0,"","ampolla_lino"],["Complejo Nutritivo Instantáneo (Caja Amp.)","Fidelité","12 x 15 ml","Tratamientos","amp","#e0679f",2700,1,0,"","ampolla_nutritivo"],["Complejo Keratínico (Caja Amp.)","Fidelité","12 x 15 ml","Tratamientos","amp","#e0679f",2700,1,0,"","ampolla_keratina"],["Máscara Ultra Black (gris platino)","Fidelité","270 ml","Tratamientos","jar","#3a3a3a",9500,0,0,"","mascara_ultrablack"],["Máscara p/Neutralizar Tonos Dorados Purple","Fidelité","1000 ml","Tratamientos","jar","#6b3fa0",19100,0,0,"","mascara_purple"],["Desenredante Instantáneo Bi-Fase","Fidelité","250 ml","Styling","bottle","#2b6fd6",14200,0,0,"","desenredante"],["Reparador de Puntas de Lino \"medium density\"","Fidelité","30 ml","Styling","bottle","#2b6fd6",15200,0,0,"","rep_lino"],["Reparador de Puntas de Girasol \"high density\"","Fidelité","30 ml","Styling","bottle","#2b6fd6",15200,0,0,"","rep_girasol"],["Gel Efecto Húmedo \"Fijación Natural\"","Fidelité","230 g","Styling","jar","#2b6fd6",5200,0,0,"","gel_natural"],["Gel Efecto Húmedo \"Fijación Natural\"","Fidelité","1000 g","Styling","jar","#2b6fd6",12100,0,0,"","gel_natural"],["Gel Fix \"Fijación Extrema\"","Fidelité","230 g","Styling","jar","#2b6fd6",9400,0,0,"","gel_extremo"],["Gel Fix \"Fijación Extrema\"","Fidelité","1000 g","Styling","jar","#2b6fd6",23000,0,0,"","gel_extremo"],["Gel Efecto Húmedo \"Fijación Extrema\"","Fidelité","230 g","Styling","jar","#2b6fd6",16800,0,0,"","gel_humedo_extremo"],["Gel Efecto Húmedo \"Fijación Extrema\"","Fidelité","1000 g","Styling","jar","#2b6fd6",51200,0,0,"","gel_humedo_extremo"],["Pasta Semimate - 02 - STYLING WAX","Fidelité","50 g","Styling","jar","#2b6fd6",0,0,0,"","pasta"],["Pasta Mate - 03 - MATTE WAX","Fidelité","50 g","Styling","jar","#2b6fd6",0,0,0,"","pasta"],["Urban Shield 365 for hair Escudo Capilar con Filtro Solar","Fidelité","120 ml","Styling","bottle","#2b6fd6",14760,0,0,"","urban"],["Brillo Instantáneo Argán Oil Shine Mist","Fidelité","120 ml","Argán","bottle","#c8902a",19500,0,0,"p3.jpg","brillo_argan"],["Mythical Shampoo Argán","Fidelité","260 ml","Argán","bottle","#c8902a",10700,0,0,"p8.jpg","shampoo_argan"],["Mythical Conditioner Argán","Fidelité","260 ml","Argán","bottle","#c8902a",10700,0,0,"p1.jpg","acond_argan"],["Mythical Shampoo Argán","Fidelité","900 ml","Argán","bottle","#c8902a",25850,0,0,"p9.jpg","shampoo_argan"],["Mythical Conditioner Argán ¡Re-Lanzamiento!","Fidelité","900 ml","Argán","bottle","#c8902a",25850,0,0,"p2.jpg","acond_argan"],["Mythical Mascara Capilar Argán","Fidelité","250 ml","Argán","jar","#c8902a",12000,0,0,"p0.jpg","mascara_argan"],["Mythical Mascara Capilar Argán","Fidelité","1000 ml","Argán","jar","#c8902a",26950,0,0,"p6.jpg","mascara_argan"],["Mythical Elixir Oil Argán","Fidelité","120 ml","Argán","bottle","#c8902a",31790,0,0,"p5.jpg","elixir_argan"],["Mythical Elixir Oil Travel Size Argán","Fidelité","12 x 10 ml","Argán","amp","#c8902a",4800,1,0,"p11.jpg","travel_argan"],["Ampolla Intensive Argán","Fidelité","12 x 15 ml","Argán","amp","#c8902a",3000,1,0,"p10.jpg","ampolla_argan"],["Protector Térmico Capilar Argán","Fidelité","120 ml","Argán","bottle","#c8902a",26400,0,0,"p7.jpg","termico_argan"],["Crema de Peinado Argán","Fidelité","250 ml","Argán","bottle","#c8902a",8260,0,0,"p4.jpg","crema_peinado_argan"],["Caviar Plex Home Ritual Conditioner | Step Nº 3","Caviar","230 ml","Caviar","bottle","#1d1d1d",9870,0,0,"p13.jpg","plex_home"],["Shampoo Cabellos Secos & Castigados","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p31.jpg","shampoo_caviar_secos"],["Shampoo Cabellos Teñidos","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p33.jpg","shampoo_caviar_tenidos"],["Shampoo Cabellos Grasos","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p27.jpg","shampoo_caviar_grasos"],["Shampoo Cabellos Normales","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p29.jpg","shampoo_caviar_normales"],["Conditioner Cabellos Secos & Castigados","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p14.jpg","acond_caviar_secos"],["Conditioner Cabellos Teñidos","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p16.jpg","acond_caviar_tenidos"],["Conditioner Cabellos Grasos","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"p12.jpg","acond_caviar_grasos"],["Shampoo Cabellos Secos & Castigados","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p32.jpg","shampoo_caviar_secos"],["Shampoo Cabellos Teñidos","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p34.jpg","shampoo_caviar_tenidos"],["Shampoo Cabellos Grasos","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p28.jpg","shampoo_caviar_grasos"],["Shampoo Cabellos Normales","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p30.jpg","shampoo_caviar_normales"],["Conditioner Cabellos Secos & Castigados","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p15.jpg","acond_caviar_secos"],["Conditioner Cabellos Teñidos","Caviar","900 ml","Caviar","bottle","#1d1d1d",22900,0,0,"p17.jpg","acond_caviar_tenidos"],["Máscara Capilar Hidro-Nutritiva (En Estuche)","Caviar","250 ml","Caviar","jar","#1d1d1d",9430,0,0,"p21.jpg","mascara_caviar"],["Máscara Capilar Hidro-Nutritiva","Caviar","1000 ml","Caviar","jar","#1d1d1d",20360,0,0,"p20.jpg","mascara_caviar"],["Complejo Hidro-Nutrit. (Sin Enjuague) - Caja Amp.","Caviar","12 x 15 ml","Caviar","amp","#1d1d1d",2100,1,0,"p19.jpg","complejo_caviar"],["Serum Reparador de Puntas Caviar","Caviar","30 ml","Caviar","bottle","#1d1d1d",23400,0,0,"p26.jpg","serum_caviar"],["Caviar Plex Kit - Hair Additive System | Step Nº 1 & Nº 2","Caviar","21 + 72 ml","Caviar","box","#1d1d1d",0,0,0,"","plex_kit"],["Conditioner Cabellos Normales","Caviar","260 ml","Caviar","bottle","#1d1d1d",8980,0,0,"","acond_caviar_normales"],["Bomba Dosificadora p/ Shampoo y Conditioner","Caviar","900 ml","Caviar","box","#1d1d1d",0,0,0,"","bomba"],["Crema de Peinado Multi-Acción (Sin Enjuague)","Caviar","250 ml","Caviar","bottle","#1d1d1d",7980,0,0,"","cp_multi"],["Crema de Peinado Lacios (Sin Enjuague)","Caviar","250 ml","Caviar","bottle","#1d1d1d",7980,0,0,"","cp_lacios"],["Crema de Peinado Rulos (Sin Enjuague)","Caviar","250 ml","Caviar","bottle","#1d1d1d",7980,0,0,"","cp_rulos"],["Crema de Peinado Teñidos (Sin Enjuague)","Caviar","250 ml","Caviar","bottle","#1d1d1d",7980,0,0,"","cp_tenidos"],["Protector Térmico Capilar Anti-Age","Caviar","120 ml","Caviar","bottle","#1d1d1d",21600,0,0,"","termico_caviar"],["Shampoo Kill Frizz","Fidelité","230 ml","Kill Frizz","bottle","#7b4bd1",11120,0,0,"","shampoo_kf"],["Shampoo Kill Frizz","Fidelité","900 ml","Kill Frizz","bottle","#7b4bd1",21780,0,0,"","shampoo_kf"],["Máscara Capilar Kill Frizz","Fidelité","250 ml","Kill Frizz","jar","#7b4bd1",16100,0,0,"","mascara_kf"],["Máscara Capilar Kill Frizz","Fidelité","500 ml","Kill Frizz","jar","#7b4bd1",21780,0,0,"","mascara_kf"],["Loción Capilar Kill Frizz","Fidelité","120 ml","Kill Frizz","bottle","#7b4bd1",11320,0,0,"","locion_kf"],["Shampoo FREE","Fidelité","230 ml","Free","bottle","#2aa6b8",13500,0,1,"","shampoo_free"],["Shampoo FREE","Fidelité","900 ml","Free","bottle","#2aa6b8",30250,0,0,"","shampoo_free"],["Acondicionador FREE","Fidelité","230 ml","Free","bottle","#2aa6b8",13500,0,0,"","acond_free"],["Acondicionador FREE","Fidelité","900 ml","Free","bottle","#2aa6b8",30250,0,0,"","acond_free"],["Crema de Peinar FREE","Fidelité","230 ml","Free","bottle","#2aa6b8",10500,0,0,"","crema_free"],["Mascara Capilar FREE","Fidelité","1000 ml","Free","jar","#2aa6b8",30000,0,0,"","mascara_free"],["Mascara Capilar FREE","Fidelité","250 ml","Free","jar","#2aa6b8",13300,0,0,"","mascara_free"],["Ampolla Capilar FREE (cajita contiene 12 ampollas)","Fidelité","12 x 15 ml","Free","amp","#2aa6b8",3630,1,0,"","ampolla_free"],["Gorro Capilar Multifunción Silicona","Gorro","","Accesorios","box","#7a7a7a",0,0,0,"","gorro"],["Capa (con logo)","Fidelité-Caviar","","Accesorios","box","#7a7a7a",0,0,0,"","capa"],["Delantal (con logo)","Fidelité-Caviar","","Accesorios","box","#7a7a7a",0,0,0,"","delantal"],["Shaker Batidor","Fidelité","","Accesorios","box","#7a7a7a",0,0,0,"","shaker"]];
+const FI={"shampoo_argan":["Shampoo anti-age con aceite virgen de argán, apto para todo tipo de cabello. Hidrata y nutre en profundidad, ayuda a combatir el frizz, desenreda y deja un brillo intenso. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos hasta cubrir todo el cabello.","Dejá actuar como mínimo 1 minuto y enjuagá bien."]],"acond_argan":["Acondicionador anti-age con aceite virgen de argán para todo tipo de cabello. Desenreda, hidrata, nutre y realza el brillo, ayudando a controlar el frizz. Tiene filtro UV.",["Aplicalo después del shampoo, sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 3 minutos y enjuagá."]],"mascara_argan":["Máscara intensiva con aceite virgen de argán, para todo tipo de cabello. Tratamiento anti-age que aporta hidratación profunda, nutrición, textura liviana y brillo inmediato. Antifrizz y con filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo, de medios a puntas, dejando 1 cm libre desde la raíz.","Masajeá y peiná para repartir el producto.","Dejá actuar al menos 10 minutos y enjuagá con abundante agua."]],"crema_peinado_argan":["Crema para peinar sin enjuague con aceite virgen de argán. Modela cabellos secos y maltratados, aporta brillo, suavidad e hidratación y ayuda a controlar el frizz. Tiene filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"elixir_argan":["Aceite multifunción con argán, vitamina E y aceites de camelia, pracaxi y almendras. Da brillo y suavidad, reduce el frizz, ayuda con las puntas abiertas y protege del calor y las agresiones externas gracias a su filtro UV.",["Como protector antes de planchita o brushing: 2 o 3 presiones de medios a puntas, reforzando las puntas.","Para terminar el peinado: 1 o 2 presiones sobre largos y puntas, sin tocar el cuero cabelludo.","Uso diario: 1 o 2 presiones de medios a puntas sobre el cabello seco."]],"travel_argan":["Versión de viaje (10 ml) del aceite multifunción con argán, vitamina E y aceites de camelia, pracaxi y almendras. Brillo, suavidad, menos frizz y protección UV en formato para llevar.",["Antes del lavado: 2 o 3 presiones de raíz a puntas, 5 a 10 minutos, enjuagá y lavá como siempre.","Antes de herramientas de calor: 2 o 3 presiones de medios a puntas.","Para terminar: 1 o 2 presiones en largos y puntas.","Nutrición intensa: aplicá en todo el cabello, cubrí con toalla, dale 5 minutos de calor con secador, esperá 30 minutos y enjuagá."]],"brillo_argan":["Spray de brillo instantáneo con argán. Realza el cabello y le devuelve luminosidad al momento, como toque final del peinado.",["Usalo con el cabello ya lavado, acondicionado y peinado.","Vaporizá a unos 20 cm de distancia."]],"ampolla_argan":["Ampollas restauradoras con aceite virgen de argán para cabellos muy secos, dañados o maltratados. Reparan y nutren la fibra en profundidad, con omega 3 y 9 y vitamina E. Caja de 12 x 15 ml.",["Si la ampolla tiene partes blancas, sumergila en agua tibia hasta que se vuelva transparente.","Mezclá los 15 ml con 120 ml de agua tibia (por ejemplo en el shaker Fidelité) hasta lograr una crema.","Aplicá con masajes sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar al menos 10 minutos y enjuagá. Para un tratamiento intensivo, usala dos veces por semana."]],"termico_argan":["Protector térmico con aceite de argán. Forma una película que cuida el cabello del calor de la planchita y el secador, mientras hidrata, nutre y da brillo. Tiene filtro UV (benzofenona-3) y no contiene agua.",["Aplicalo sobre el cabello húmedo, ya lavado y acondicionado.","Vaporizá a unos 20 cm de distancia.","Después hacé el brushing o el planchado."]],"shampoo_caviar_secos":["Shampoo anti-age para cabellos secos y castigados por químicos o calor. Con extracto de caviar, D-pantenol y proteínas de trigo, seda, soja y arroz: devuelve brillo, suavidad e hidratación. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"shampoo_caviar_tenidos":["Shampoo anti-age para cabellos teñidos o con mechas. Ayuda a proteger, prolongar y realzar el color. Con extracto de caviar, D-pantenol y proteínas vegetales. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"shampoo_caviar_grasos":["Shampoo anti-age para cabellos grasos. Limpia en profundidad el exceso de sebo y deja el cabello liviano, con brillo y suavidad. Con extracto de caviar, D-pantenol y proteínas vegetales. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"shampoo_caviar_normales":["Shampoo anti-age de uso diario para cabellos normales. Con extracto de caviar, D-pantenol, proteínas vegetales y un complejo natural que ayuda a reducir el frizz y hace al cabello más dócil. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"acond_caviar_secos":["Acondicionador anti-age para cabellos secos y castigados. Nutre, sella las cutículas y devuelve brillo y suavidad. Con extracto de caviar, D-pantenol y proteínas vegetales. Tiene filtro UV.",["Aplicalo sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 2 minutos y enjuagá."]],"acond_caviar_tenidos":["Acondicionador anti-age para cabellos teñidos o con mechas. Ayuda a que el color dure más y se vea intenso. Con extracto de caviar, D-pantenol y proteínas vegetales. Tiene filtro UV.",["Aplicalo sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 2 minutos y enjuagá."]],"acond_caviar_grasos":["Acondicionador anti-age para cabellos grasos. Desenreda y aporta brillo y suavidad sin apelmazar, ayudando a regular el sebo. Con extracto de caviar y proteínas vegetales. Tiene filtro UV.",["Aplicalo sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 2 minutos y enjuagá."]],"acond_caviar_normales":["Acondicionador anti-age de la línea Caviar para cabellos normales. Desenreda y aporta brillo, suavidad e hidratación para el cuidado diario.",["Aplicalo sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 2 minutos y enjuagá."]],"plex_home":["Paso 3 del sistema Caviar Plex: acondicionador para usar en casa que mantiene el cabello protegido, suave y brillante, y prolonga el efecto del tratamiento hecho en el salón con los pasos 1 y 2.",["Aplicalo sobre el cabello recién lavado, de medios a puntas, sin tocar el cuero cabelludo.","Peiná y dejá actuar al menos 3 minutos.","Enjuagá."]],"plex_kit":["Sistema profesional Caviar Plex de dos pasos (Power Bond Nº1 y Bond Sealer Nº2) para cuidar la fibra capilar durante procesos químicos. Se complementa en casa con el acondicionador Home Ritual Paso 3. Uso profesional.",[]],"mascara_caviar":["Máscara anti-age hidro-nutritiva con extracto de caviar, D-pantenol y proteínas de trigo, seda, soja y arroz. Repara y suaviza intensamente, devolviendo brillo e hidratación. Tiene filtro UV.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar de 3 a 5 minutos y enjuagá con abundante agua."]],"cp_multi":["Crema para peinar sin enjuague de la línea Caviar, para todo tipo de cabello. Hidrata, modela y aporta brillo y suavidad. Con extracto de caviar y proteínas vegetales. Tiene filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"cp_lacios":["Crema para peinar sin enjuague para cabellos lacios o alisados. Ayuda a prolongar el efecto del alisado o la planchita, dejando el cabello controlado y manejable. Con extracto de caviar. Tiene filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"cp_rulos":["Crema para peinar sin enjuague para rulos. Define y controla los rizos, los hidrata y ayuda a evitar el frizz. Con extracto de caviar. Tiene filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"cp_tenidos":["Crema para peinar sin enjuague para cabellos teñidos. Forma una película protectora que ayuda a retener el color y a que dure más. Con extracto de caviar. Tiene filtro UV.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"complejo_caviar":["Ampollas anti-age sin enjuague con extracto de caviar, proteínas vegetales y D-pantenol, para cabellos débiles, opacos o ásperos. Brillo y vitalidad desde la primera aplicación, ideal para una ocasión especial. Caja de 12 x 15 ml.",["Aplicá el contenido de la ampolla sobre el cabello húmedo y acondicionado.","Masajeá y distribuí por todo el cabello, sin tocar la raíz.","No enjuagues: pasá directo al peinado."]],"termico_caviar":["Protector térmico anti-age con siliconas protectoras, extracto de caviar, D-pantenol, proteínas vegetales y vitamina E. Cuida el cabello del calor extremo y aporta brillo y suavidad. Tiene filtro UV y no contiene agua.",["Aplicalo sobre el cabello húmedo, ya lavado y acondicionado.","Vaporizá a unos 20 cm de distancia.","Después hacé el brushing o el planchado."]],"serum_caviar":["Sérum anti-age para puntas. Ayuda a prevenir y reducir las puntas abiertas, sella la cutícula, aplaca el frizz y da un brillo notable. Tiene filtro UV.",["Poné una pequeña cantidad en la palma de la mano.","Distribuí de medios a puntas sobre el cabello húmedo o seco; en puntas muy dañadas, sumá un poco más.","Para un acabado más liso, aplicalo en húmedo antes del secador y repasá las puntas al final."]],"bubble":["Tratamiento multifunción express con extracto de caviar y keratina. En 10 minutos nutre, repara, controla el frizz, da brillo y suavidad, protege del sol y realza el color. Caja con 12 unidades de 20 g.",["Poné el producto en la palma de la mano y distribuilo sobre el cabello mojado.","Dejá actuar 10 minutos mientras peinás.","Enjuagá bien. Usalo 1 o 2 veces por semana."]],"tintura_caviar":["Coloración en crema Caviar con extractos de caviar, keratina y quinoa. Cubre las canas, da un color intenso y duradero y trata el cabello mientras lo tiñe. Carta de 30 tonos.",["Antes de cada coloración hacé una prueba de sensibilidad 48 h antes: aplicá un poco de la mezcla detrás de la oreja o en el antebrazo y, si aparece enrojecimiento, picazón o irritación, no uses el producto. Ante dudas, consultá a un médico. Usá guantes.","Mezclá en un recipiente no metálico el pomo de 60 g con 90 ml de Revelador Caviar y batí con pincel hasta que quede homogéneo.","Cabello natural (sin teñir): aplicá en medios y puntas sobre el cabello seco sin lavar, esperá 20 minutos, aplicá en raíces y esperá 20 minutos más (45 en total si hay muchas canas). Enjuagá bien.","Retoque de raíz: aplicá en raíces, esperá 20 minutos, extendé a las puntas y esperá 10 a 15 minutos más. Enjuagá bien.","Superaclarantes: con revelador de 30 o 40 vol., solo en cabello natural a partir de castaño claro; aclaran hasta 4 tonos."]],"carta_caviar":["Carta de colores de la tintura Caviar Color Cream, con sus 30 tonos, para elegir y mostrar el color en el salón.",[]],"revelador_caviar":["Revelador en crema perfumado para usar solo con la tintura Caviar Color Cream. Permite una aplicación precisa y controlada y evita el resecamiento.",["Mezclá únicamente con Caviar Color Cream, en proporción 1 + 1,5: 60 g de tintura con 90 ml de revelador.","Conviene medir con balanza.","Elegí el volumen según el trabajo: 10 vol. para tono sobre tono, 20 vol. para color y cobertura de canas, 30 o 40 vol. para aclarar."]],"tintura_cm":["Coloración en crema Colormaster de alto poder cubritivo: color intenso, brillante y duradero que cuida el cabello mientras lo tiñe. Cubre el 100% de las canas.",["Antes de cada coloración hacé una prueba de sensibilidad 48 h antes: aplicá un poco de la mezcla detrás de la oreja o en el antebrazo y, si aparece enrojecimiento, picazón o irritación, no uses el producto. Ante dudas, consultá a un médico. Usá guantes.","Mezclá en un bol no metálico el pomo con 90 ml de Revelador Colormaster (20 o 30 vol. según el tono) hasta lograr una crema homogénea. Aplicala enseguida: actúa solo 40 minutos.","Cabello sin teñir: aplicá en medios y puntas, esperá 20 minutos, después en raíces y esperá 40 minutos más. Enjuagá.","Retoque de raíz: aplicá en raíces, esperá 20 minutos y extendé a largos y puntas el tiempo necesario para igualar el color. Enjuagá bien.","Aclarantes: con revelador de 30 vol., proporción 1 + 1,5, solo en cabello sin teñir a partir de castaño claro. Aclaran hasta 3 tonos."]],"tintura_na":["Tintura en crema sin amoníaco, apta veganos, con proteínas vegetales y aceites de quinoa, argán y keratina vegetal. Cubre el 100% de las canas, retiene el color, da brillo y ayuda a controlar el frizz.",["Antes de cada coloración hacé una prueba de sensibilidad 48 h antes: aplicá un poco de la mezcla detrás de la oreja o en el antebrazo y, si aparece enrojecimiento, picazón o irritación, no uses el producto. Ante dudas, consultá a un médico. Usá guantes.","Mezclá en un recipiente no metálico el pomo de 60 g con 90 ml de Revelador Non Ammonia hasta lograr una crema homogénea. Es normal que la mezcla se oscurezca un poco. Aplicala enseguida: actúa entre 40 y 50 minutos.","Cabello sin teñir (o más de 3 meses desde la última coloración): aplicá en medios y puntas sobre el cabello seco sin lavar, esperá 20 minutos, aplicá en raíces y esperá 20 más (45 en total si hay muchas canas).","Retoque de raíz: aplicá en raíces, esperá 20 minutos y extendé a las puntas 10 a 15 minutos más.","Enjuagá hasta que el agua salga clara, lavá con Shampoo Free y terminá con Acondicionador o Máscara Free.","Si el cabello está muy dañado o tiene alisado o permanente, reducí el tiempo de 5 a 10 minutos; si es grueso o tiene muchas canas, sumá de 5 a 10 minutos."]],"revelador_na":["Revelador en crema 100% libre de amoníaco, siliconas, colorantes, sulfatos, parabenos y sal. Apto veganos y no testeado en animales.",["Mezclá únicamente con la Tintura Non Ammonia, en proporción 1 + 1,5: 60 g de tintura con 90 ml de revelador. Usá balanza.","10 vol.: tono sobre tono, oscurecer o baños de luz. 20 vol.: color permanente y cobertura de canas. 30 vol.: para aclarar hasta 4 tonos."]],"revelador_cm":["Revelador en crema perfumado y autoemulsionante para usar solo con la Coloración en Crema Colormaster. Tiene la viscosidad justa para una aplicación localizada y evita el resecamiento.",["Mezclá únicamente con Coloración en Crema Colormaster, en proporción 1 + 1,5: 60 g de tintura con 90 ml de revelador.","Medí con balanza para un resultado exacto."]],"carta_cm":["Carta de colores Colormaster, nueva edición, con todos sus tonos más los Color Express, para elegir el color en el salón.",[]],"carta_na":["Carta de colores de la Tintura Non Ammonia, para elegir el tono en el salón.",[]],"decolorante":["Polvo decolorante Colormaster libre de polvillo. Aclara hasta 7 tonos en cabello natural o teñido y es ideal para rubios luminosos, mechas y efectos muy claros. Doypack de 700 g.",["Mezclá en un recipiente no metálico 25 g de polvo con 50 ml de Revelador Colormaster (10, 20, 30 o 40 vol. según cuánto quieras aclarar).","Aplicá sobre el cabello seco en la zona a decolorar y dejá actuar de 25 a 50 minutos, controlando el resultado.","La raíz aclara más rápido por el calor del cuero cabelludo: en la primera decoloración aplicá primero en las puntas y después en la raíz.","Enjuagá con abundante agua tibia y lavá con un shampoo suave, por ejemplo el de Argán."]],"quitamanchas":["Quitamanchas Colormaster: elimina de la piel las manchas que deja la tintura, sin dañarla.",["Mojá un algodón con el producto.","Frotá suavemente la zona manchada.","Repetí si hace falta."]],"color_express":["Color Express de Colormaster: coloración instantánea sin amoníaco para matizar y dar reflejos de color. Pack de 3 x 30 ml.",[]],"miracle":["Miracle Retouch de Fidelité: retocador de raíces para disimular las canas entre una coloración y otra. Envase de 100 ml.",[]],"shampoo_neutro":["Shampoo cremoso neutro Colormaster (pH 6,5). Limpia en profundidad todo tipo de cabello, incluso cueros cabelludos sensibles, y respeta el color.",["Aplicá sobre el cabello húmedo y masajeá hasta que haga espuma.","Enjuagá con agua tibia."]],"shampoo_extra_acido":["Shampoo extra ácido Colormaster, ideal después de la coloración. Neutraliza los restos químicos que dejan el cabello áspero y sin brillo, equilibra la cutícula y ayuda a que el color dure más.",["Aplicá sobre el cuero cabelludo húmedo y masajeá hasta que haga espuma.","Enjuagá con agua tibia y peiná como siempre. Apto para uso diario."]],"acond_acido":["Acondicionador cremoso ácido Colormaster (pH 4,5). Sella las cutículas y mejora al instante la textura, la suavidad y el brillo, con un color radiante de raíz a puntas.",["Aplicalo sobre el cabello recién lavado con shampoo Colormaster.","Distribuí, dejá actuar 2 minutos y enjuagá."]],"crema_extra_acida":["Crema extra ácida Colormaster (pH 3,5) con D-pantenol, para usar después de la coloración. Sella la fibra, fija el color, hidrata en profundidad y desenreda.",["Aplicá la cantidad necesaria sobre el cabello mojado, de medios a puntas.","Dejá actuar de 3 a 5 minutos.","Enjuagá bien."]],"mascara_keratina":["Máscara reparadora con keratina. Repara y fortalece la fibra dañada y aporta vitalidad, brillo y suavidad.",["Aplicala sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar de 3 a 5 minutos y enjuagá.","Usala dos veces por semana."]],"mascara_almendras":["Máscara hidratante con aceite de almendras. Aporta vitaminas e hidratación profunda para un cabello sano y fuerte.",["Aplicala sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar de 3 a 5 minutos y enjuagá.","Usala dos veces por semana."]],"mascara_coco":["Máscara renovadora de coco y vainilla. Remueve residuos, renueva el cabello y deja un perfume muy agradable.",["Aplicala sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar de 3 a 5 minutos y enjuagá.","Usala dos veces por semana."]],"ampolla_lino":["Ampollas reestructurantes con extracto de semillas de lino para cabellos sensibilizados y dañados. Con ácidos grasos y ceramidas: reestructuran la fibra, cierran la cutícula y controlan el frizz. Caja de 12 x 15 ml.",["Aplicá el contenido de la ampolla sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar como mínimo 5 minutos.","Enjuagá con agua tibia. Para un tratamiento intensivo, dos veces por semana."]],"ampolla_nutritivo":["Ampollas de nutrición instantánea con D-pantenol y vitamina B6, para cabellos opacos, débiles y quebradizos. Reparan, dan brillo y desenredan. Caja de 12 x 15 ml.",["Si la ampolla tiene partes blancas, sumergila en agua caliente hasta que se vuelva transparente.","Mezclá los 15 ml con 60 ml de agua tibia en un bol hasta lograr una crema.","Aplicá sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar 10 minutos con vapor o 20 minutos con gorra plástica y enjuagá. Para un tratamiento intensivo, dos veces por semana."]],"ampolla_keratina":["Ampollas de keratina para cabellos débiles, dañados y quebradizos. Forman una película que reconstruye y protege la fibra, con brillo desde la primera aplicación y efecto antifrizz. Caja de 12 x 15 ml.",["Aplicá el contenido de la ampolla sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar como mínimo 5 minutos.","Enjuagá con agua tibia. Para un tratamiento intensivo, dos veces por semana."]],"shampoo_keratina":["Shampoo de keratina reestructurante y antifrizz. Repara y fortalece la fibra dañada, ideal para cabellos quebradizos y maltratados, y lo deja suave y con brillo.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"acond_keratina":["Acondicionador de keratina reestructurante y antifrizz. Desenreda, facilita el peinado y fortalece la fibra dañada, dejando el cabello suave y con brillo.",["Aplicalo sobre el cabello recién lavado.","Distribuí por todo el largo sin tocar el cuero cabelludo y peiná.","Dejá actuar al menos 2 minutos y enjuagá."]],"shampoo_corrector":["Shampoo corrector Reinvention con pigmentos violetas que neutralizan los tonos amarillos y anaranjados en rubios. Con keratina, devuelve brillo al cabello después de la coloración. Actúa en 3 minutos.",["Primero lavá con tu shampoo habitual.","Aplicá el corrector sobre el cabello mojado, masajeá y dejá actuar 3 minutos. Enjuagá bien.","Terminá con el acondicionador Reinvention. Repetí 3 veces por semana hasta lograr el tono; después usalo solo cuando vuelvan los tonos no deseados."]],"acond_corrector_79":["Acondicionador corrector Reinvention para rubios de altura 7 a 9. Nivela el color y reduce los tonos dorados y anaranjados. Con keratina; actúa en 3 minutos.",["Aplicá de medios a puntas sobre el cabello recién lavado con Shampoo Reinvention.","Dejá actuar al menos 3 minutos y enjuagá.","Usalo 3 veces por semana alternando con tu acondicionador habitual hasta lograr el tono; después, solo como mantenimiento."]],"acond_corrector_10":["Acondicionador corrector Reinvention para rubios platinados (altura 10). Neutraliza los tonos amarillos y anaranjados. Con keratina; actúa en 3 minutos.",["Aplicá de medios a puntas sobre el cabello recién lavado con Shampoo Reinvention.","Dejá actuar al menos 3 minutos y enjuagá.","Usalo 3 veces por semana alternando con tu acondicionador habitual hasta lograr el tono; después, solo como mantenimiento."]],"mascara_purple":["Máscara correctora Reinvention con pigmentos violetas. Neutraliza los reflejos dorados y anaranjados en cabellos decolorados, con reflejos o canas, y además hidrata, nutre y desenreda.",["Lavá con Shampoo Reinvention y secá con toalla.","Aplicá de medios a puntas y dejá actuar de 3 a 20 minutos. Enjuagá bien.","Podés mezclarla con Crema Extra Ácida Colormaster según la altura: altura 10, 1 medida de máscara + 4 o más de crema; altura 9, 1 + 3; altura 8, 1 + 2; altura 7, sola.","Alterná con el acondicionador Reinvention hasta lograr el tono; después, solo como mantenimiento."]],"mascara_ultrablack":["Máscara matizadora Ultra Black (gris platino) de Reinvention. Da un gris plata pleno y revitaliza los grises sobre cabellos decolorados. Sin amoníaco ni peróxido: se aplica directa, sin oxidante.",["Usala sobre el cabello decolorado, lavado con el Shampoo Ultra Black y secado con toalla. Usá guantes.","Aplicá de medios a puntas, masajeá y dejá actuar al menos 15 minutos.","Enjuagá con abundante agua. Usala 1 o 2 veces por semana."]],"shampoo_ultrablack":["Shampoo matizador Ultra Black (gris platino) de Reinvention. Refuerza y revitaliza el gris plata en cabellos decolorados. Sin amoníaco ni peróxido, se aplica directo.",["Usalo sobre cabello decolorado a altura 9 o 10. Usá guantes descartables.","Masajeá y dejá actuar al menos 3 minutos.","Enjuagá bien sin dejar restos. Usalo 1 o 2 veces por semana."]],"desenredante":["Desenredante bifásico instantáneo con keratina y filtro UV. Facilita el peinado en húmedo o en seco, da suavidad y brillo y no deja efecto graso.",["Agitá hasta que se mezclen las dos fases.","Vaporizá a unos 20 cm sobre el cabello húmedo o seco.","Peiná como siempre."]],"rep_lino":["Reparador de puntas con semillas de lino, de densidad media, para cabellos finos y delicados. Ayuda a prevenir y reparar las puntas abiertas. Tiene filtro UV.",["Poné una pequeña cantidad en la palma de las manos.","Distribuí sobre el cabello húmedo o seco.","Para un acabado más liso, aplicalo en húmedo antes del secador y repasá las puntas al final."]],"rep_girasol":["Reparador de puntas con semillas de girasol, de densidad alta, para cabellos castigados y rebeldes. Repara las puntas abiertas y ayuda a reducir el frizz. Tiene filtro UV.",["Poné una pequeña cantidad en la palma de las manos.","Distribuí sobre el cabello húmedo o seco.","Para un acabado más liso, aplicalo en húmedo antes del secador y repasá las puntas al final."]],"gel_natural":["Gel de fijación natural con efecto húmedo. Peinados duraderos con movimiento, para un look moderno e informal. No engrasa, no deja polvillo y se quita fácil.",["Humedecé el cabello.","Poné un poco de producto en las manos y modelá con las manos o con peine.","No uses secador."]],"gel_extremo":["Gel de fijación extrema con efecto húmedo. Mantiene el peinado firme todo el día y da brillo. No engrasa, no deja polvillo y se quita fácil.",["Humedecé el cabello.","Poné un poco de producto en las manos y modelá con las manos o con peine.","No uses secador."]],"gel_humedo_extremo":["Gel efecto húmedo de fijación extrema, con un activo de aminoácidos, vitaminas y fitoesteroles que ayuda a fortalecer el cabello. Peinados y rulos que duran más, con brillo intenso. No engrasa ni deja polvillo.",["Humedecé el cabello.","Poné un poco de producto en las manos y modelá con las manos o con peine.","No uses secador."]],"pasta":["Pasta para peinar de Fidelité para dar forma y textura al peinado. Pote de 50 g.",[]],"urban":["Urban Shield 365: spray protector para días de sol, pileta, mar, humedad o contaminación. Forma un film liviano que protege, nutre, hidrata y desenreda, con un perfume que dura. No deja efecto graso.",["Agitá antes de usar.","Vaporizá a unos 15 cm sobre el cabello húmedo o seco, sin tocar el cuero cabelludo.","Peiná como siempre. No enjuagues."]],"shampoo_kf":["Shampoo antifrizz de la línea Kill Frizz. Hidrata el cuero cabelludo, repara las cutículas dañadas desde el primer lavado y deja el cabello suave y con brillo, con un perfume que perdura.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien."]],"mascara_kf":["Máscara ultra hidratante Kill Frizz. Nutre, da luminosidad, repara la cutícula y controla el frizz desde la primera aplicación.",["Poné una buena cantidad en la palma y distribuila sobre el cabello mojado.","Dejá actuar al menos 5 minutos y enjuagá bien.","Usala 2 o 3 veces por semana."]],"locion_kf":["Bruma capilar Kill Frizz, ultraliviana. Combate el frizz y deja el cabello suave, hidratado y fácil de peinar, con perfume floral, frutal y amaderado. No deja efecto graso.",["Agitá antes de usar.","Vaporizá a unos 15 cm sobre el cabello húmedo o seco, sin tocar el cuero cabelludo.","Peiná como siempre. No enjuagues."]],"shampoo_free":["Shampoo Free sin sulfatos, parabenos, siliconas, sal ni colorantes. Limpia en profundidad respetando el cuero cabelludo, con espuma cremosa incluso con agua dura. Ideal para cabellos secos y teñidos. Uso diario.",["Aplicá una pequeña cantidad sobre el cabello mojado.","Masajeá con la yema de los dedos por todo el cabello.","Dejá actuar al menos 1 minuto y enjuagá bien. Para un mejor resultado, repetí."]],"acond_free":["Acondicionador Free sin parabenos, siliconas, sal ni colorantes. Suaviza y acondiciona todo tipo de cabello, ayuda a retener el color en cabellos teñidos y lo deja fácil de peinar y sin frizz. Uso diario.",["Poné una buena cantidad en la palma y distribuila de medios a puntas sobre el cabello mojado.","Peiná y dejá actuar 2 o 3 minutos.","Enjuagá bien."]],"crema_free":["Crema para peinar Free sin parabenos, siliconas, sal ni colorantes. Suaviza, acondiciona y controla el frizz; especialmente buena para rulos definidos. Uso diario.",["Aplicá la cantidad necesaria sobre el cabello húmedo.","Masajeá distribuyendo por todo el cabello y peiná.","No enjuagues. Dejá secar al aire o usá secador."]],"mascara_free":["Máscara Free sin parabenos, siliconas, sal ni colorantes. Repone los lípidos que pierde el cabello por químicos y calor, restaura el daño, controla el frizz, desenreda y ayuda a retener el color.",["Poné una buena cantidad en la palma y distribuila sobre el cabello mojado.","Dejá actuar al menos 5 minutos.","Enjuagá bien."]],"ampolla_free":["Ampollas Free sin parabenos, sal ni colorantes, con ácidos grasos propios del cabello. Hidratan, nutren, desenredan y reparan al instante cabellos opacos y quebradizos. Caja de 12 x 15 ml.",["Si la ampolla tiene partes blancas, sumergila en agua caliente hasta que se vuelva transparente.","Mezclá los 15 ml con 60 ml de agua tibia en un bol hasta lograr una crema.","Aplicá sobre el cabello lavado y húmedo, sin tocar la raíz.","Dejá actuar 10 minutos con vapor o 20 con gorra plástica y enjuagá."]],"bomba":["Bomba dosificadora para los envases de 900 ml de shampoo y acondicionador Caviar.",[]],"gorro":["Gorro capilar multifunción de silicona, para tratamientos y uso en el salón.",[]],"capa":["Capa de peluquería con logo Fidelité–Caviar.",[]],"delantal":["Delantal de peluquería con logo Fidelité–Caviar.",[]],"shaker":["Shaker batidor Fidelité para preparar ampollas y tratamientos que se mezclan con agua.",[]]};
+const FAM=['Todos','Coloración','Shampoo y acondicionador','Tratamientos','Styling','Argán','Caviar','Kill Frizz','Free','Accesorios'];
+const money=v=>'$'+v.toLocaleString('es-AR');
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let gid=0;
+function pack(k,col,h){
+  const w=Math.round(h*.62),g='g'+(gid++);
+  const grad=`<defs><linearGradient id="${g}" x1="0" x2="1"><stop offset="0" stop-color="${col}"/><stop offset=".55" stop-color="${col}" stop-opacity=".88"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient></defs>`;
+  let b='';
+  if(k==='bottle')b=`<rect x="24" y="2" width="12" height="12" rx="2" fill="#2a1622"/><rect x="20" y="12" width="20" height="8" rx="2" fill="#eee"/><path d="M8 34 Q8 20 30 20 Q52 20 52 34 V92 Q52 98 46 98 H14 Q8 98 8 92 Z" fill="url(#${g})"/><rect x="14" y="48" width="32" height="26" rx="3" fill="#fff" opacity=".92"/><rect x="18" y="54" width="20" height="4" rx="2" fill="${col}"/><rect x="18" y="62" width="14" height="3" rx="1.5" fill="#bbb"/><rect x="12" y="26" width="5" height="62" rx="2.5" fill="#fff" opacity=".35"/>`;
+  else if(k==='tube')b=`<rect x="20" y="84" width="20" height="14" rx="3" fill="#2a1622"/><path d="M10 6 H50 L44 84 H16 Z" fill="url(#${g})"/><rect x="10" y="4" width="40" height="6" rx="1" fill="#fff" opacity=".6"/><rect x="18" y="34" width="24" height="22" rx="3" fill="#fff" opacity=".92"/><rect x="22" y="40" width="14" height="4" rx="2" fill="${col}"/><rect x="14" y="12" width="4" height="66" rx="2" fill="#fff" opacity=".3"/>`;
+  else if(k==='jar')b=`<rect x="6" y="44" width="48" height="12" rx="4" fill="#2a1622"/><rect x="8" y="56" width="44" height="42" rx="7" fill="url(#${g})"/><rect x="14" y="66" width="32" height="18" rx="3" fill="#fff" opacity=".92"/><rect x="18" y="72" width="18" height="4" rx="2" fill="${col}"/><rect x="12" y="60" width="4" height="32" rx="2" fill="#fff" opacity=".35"/>`;
+  else if(k==='amp')b=`<g fill="url(#${g})"><rect x="8" y="30" width="10" height="68" rx="5"/><rect x="25" y="22" width="10" height="76" rx="5"/><rect x="42" y="30" width="10" height="68" rx="5"/></g><g fill="#fff" opacity=".5"><rect x="10" y="40" width="3" height="50" rx="1.5"/><rect x="27" y="32" width="3" height="58" rx="1.5"/><rect x="44" y="40" width="3" height="50" rx="1.5"/></g>`;
+  else b=`<path d="M4 26 L18 16 H56 L42 26 Z" fill="${col}" opacity=".7"/><path d="M42 26 L56 16 V88 L42 98 Z" fill="#000" opacity=".3"/><rect x="4" y="26" width="38" height="72" fill="url(#${g})"/><rect x="10" y="50" width="26" height="22" rx="3" fill="#fff" opacity=".92"/><rect x="14" y="56" width="14" height="4" rx="2" fill="${col}"/>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 60 100" aria-hidden="true">${grad}${b}</svg>`;
+}
+/* P rows: [name, brand, size, family, kind, colour, price, perUnit, isNew, photo, fichaKey] */
+const SH=[["p9.jpg", 190], ["p3.jpg", 170], ["p20.jpg", 120], ["p37.jpg", 165], ["p26.jpg", 130], ["p23.jpg", 185], ["p6.jpg", 112], ["p35.jpg", 125], ["p32.jpg", 185]];
+const row=document.getElementById('shelfRow');
+row.innerHTML=SH.map(([f,h])=>`<img src="img/${f}" alt="" style="height:calc(var(--k) * ${h}px)">`).join('');
+[...row.children].forEach((s,j)=>s.style.animationDelay=(j*60)+'ms');
+const fit=()=>{const w=row.clientWidth;[...row.children].forEach((s,j)=>s.style.display=(w<460&&j>4)||(w<760&&j>6)?'none':'')};
+const ro=new ResizeObserver(fit);ro.observe(row);
+
+document.getElementById('nprod').textContent=P.length+' productos';
+document.getElementById('lgrid').innerHTML=LINES.map(l=>`<button class="line" data-f="${l[0]}"><i style="background:${l[2]}"></i><b>${l[0]}</b><span>${l[1]}</span></button>`).join('');
+document.getElementById('lgrid').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;fam=b.dataset.f;q='';document.getElementById('q').value='';shown=PAGE;drawChips();drawGrid();document.getElementById('tienda').scrollIntoView()});
+
+const PAGE=24;let fam='Todos',q='',shown=PAGE,cart={};
+try{cart=JSON.parse(localStorage.getItem('hlc-cart2')||'{}')||{}}catch(e){cart={}}
+const save=()=>{try{localStorage.setItem('hlc-cart2',JSON.stringify(cart))}catch(e){}};
+const chips=document.getElementById('chips');
+const drawChips=()=>{chips.innerHTML=FAM.map(c=>`<button class="chip" data-c="${c}" aria-pressed="${c===fam}">${c}</button>`).join('')};
+chips.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;fam=b.dataset.c;shown=PAGE;drawChips();drawGrid()});
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const priceHtml=p=>p[6]?`<span class="price">${money(p[6])}${p[7]?' <small>c/u</small>':''}</span>`:`<span class="price ask">Consultar precio</span>`;
+const grid=document.getElementById('grid'),moreBtn=document.getElementById('moreBtn');
+function drawGrid(){
+  const t=norm(q.trim());
+  const list=P.map((p,i)=>[p,i]).filter(([p])=>(fam==='Todos'||p[3]===fam)&&(!t||t.split(/\s+/).every(w=>norm(p.slice(0,4).join(' ')).includes(w))));
+  const vis=list.slice(0,shown);
+  grid.innerHTML=vis.length?vis.map(([p,i])=>`<article class="prod">${p[8]?'<span class="new">Nuevo</span>':''}${p[9]?`<div class="pic ph" data-open="${i}"><img loading="lazy" src="img/${p[9]}" alt="${esc(p[0])}"></div>`:`<div class="pic" data-open="${i}">${pack(p[4],p[5],104)}</div>`}<div class="pbody"><span class="cat">${esc(p[1])}</span><h3><a href="#producto-${i}" data-open="${i}">${esc(p[0])}</a></h3><span class="cont">${esc(p[2]||'')}</span><button class="more-info" data-open="${i}">Ver descripción y modo de uso</button><div class="pfoot">${priceHtml(p)}${p[6]?`<button class="add" data-id="${i}">${cart[i]?'Agregar otro':'Agregar'}</button>`:`<a class="ask-btn" target="_blank" rel="noopener" href="https://wa.me/5493765112650?text=${encodeURIComponent('Hola! Quiero consultar el precio de '+p[0]+(p[2]?' '+p[2]:''))}">Consultar</a>`}</div></div></article>`).join(''):`<div class="empty">No encontramos productos con esa búsqueda. Probá otra palabra o consultanos por WhatsApp.</div>`;
+  moreBtn.hidden=list.length<=shown;
+  moreBtn.textContent='Ver más productos ('+(list.length-vis.length)+')';
+}
+moreBtn.addEventListener('click',()=>{shown+=PAGE;drawGrid()});
+grid.addEventListener('click',e=>{const o=e.target.closest('[data-open]');if(o){e.preventDefault();openFicha(+o.dataset.open);return}const b=e.target.closest('.add');if(!b)return;const id=b.dataset.id;cart[id]=(cart[id]||0)+1;save();drawCart();b.textContent='Agregar otro'});
+document.getElementById('q').addEventListener('input',e=>{q=e.target.value;shown=PAGE;drawGrid()});
+
+const items=document.getElementById('items'),send=document.getElementById('send'),nota=document.getElementById('nota');
+const $=id=>document.getElementById(id);const rv=n=>(document.querySelector('input[name='+n+']:checked')||{}).value;
+const DATOS=['nombre','tel','mail','dir','loc'];
+try{const s=JSON.parse(localStorage.getItem('hlc-datos')||'{}');DATOS.forEach(k=>{if(s[k])$(k).value=s[k]})}catch(e){}
+const saveDatos=()=>{try{const o={};DATOS.forEach(k=>o[k]=$(k).value);localStorage.setItem('hlc-datos',JSON.stringify(o))}catch(e){}};
+let enviando=false;
+function faltantes(){const ent=rv('entrega');return [!$('nombre').value.trim()&&'tu nombre',$('tel').value.replace(/\D/g,'').length<8&&'un teléfono válido',ent==='envio'&&!$('dir').value.trim()&&'la dirección',ent==='envio'&&!$('loc').value.trim()&&'la localidad'].filter(Boolean)}
+function drawCart(){
+  for(const k of Object.keys(cart)){if(!P[k]||!P[k][6])delete cart[k]}
+  const lines=Object.entries(cart).filter(([id,n])=>n>0&&P[id]).map(([id,n])=>({id,p:P[id],n}));
+  const tot=lines.reduce((s,l)=>s+l.p[6]*l.n,0),cnt=lines.reduce((s,l)=>s+l.n,0);
+  const label=p=>p[0]+(p[2]?' '+p[2]:'');
+  items.innerHTML=lines.length?lines.map(l=>`<div class="it"><span>${esc(label(l.p))}</span><em>${money(l.p[6]*l.n)}</em><div class="qty"><button data-d="-1" data-id="${l.id}" aria-label="Quitar uno">−</button><b>${l.n}</b><button data-d="1" data-id="${l.id}" aria-label="Agregar uno">+</button><button class="rm" data-d="x" data-id="${l.id}">Quitar</button></div></div>`).join(''):`<p class="small">Todavía no agregaste productos. Elegí lo que necesites de la tienda.</p>`;
+  $('total').textContent=money(tot);
+  $('count').textContent=cnt;
+  $('mbar').hidden=!cnt;
+  $('mtxt').textContent=cnt+(cnt===1?' producto · ':' productos · ')+money(tot);
+  const ef=rv('pago')==='efectivo';
+  send.textContent=ef?'Confirmar pedido':'Ir a pagar '+(tot?money(tot):'');
+  $('sendNote').textContent=ef?'Tu pedido queda registrado y lo pagás en efectivo '+(rv('entrega')==='envio'?'al recibirlo.':'al retirarlo.'):'Vas a pagar en la pantalla segura de Mercado Pago y volvés a la tienda con la confirmación.';
+  const falta=lines.length?faltantes():[];
+  $('falta').hidden=!falta.length;$('falta').textContent=falta.length?'Para continuar completá '+falta.join(', ').replace(/, ([^,]*)$/,' y $1')+'.':'';
+  send.disabled=enviando||!lines.length||falta.length>0;
+}
+async function enviarPedido(){
+  if(send.disabled)return;
+  const ent=rv('entrega');
+  const body={items:Object.entries(cart).map(([id,qty])=>({id:+id,qty})),
+    cliente:{nombre:$('nombre').value,telefono:$('tel').value,email:$('mail').value},
+    entrega:ent==='envio'?{tipo:'envio',direccion:$('dir').value,localidad:$('loc').value}:{tipo:'retiro',sucursal:$('sucursal').value},
+    pago:rv('pago'),nota:nota.value};
+  enviando=true;send.classList.add('busy');send.textContent='Procesando…';send.disabled=true;$('falta').hidden=true;
+  try{
+    const r=await fetch('/api/pedidos',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'No pudimos registrar el pedido. Probá de nuevo.');
+    if(d.pagarEn){try{sessionStorage.setItem('hlc-ultimo',d.id)}catch(e){}location.href=d.pagarEn;return}
+    cart={};save();drawCart();drawGrid();mostrarPedido(d.id);
+  }catch(err){$('falta').textContent=err.message;$('falta').hidden=false}
+  finally{enviando=false;send.classList.remove('busy');drawCart()}
+}
+send.addEventListener('click',enviarPedido);
+const EST={pagado:['Pago aprobado','#1c9e50','✓','Recibimos tu pago. Te avisamos cuando el pedido esté listo.'],
+  pago_pendiente:['Pago pendiente','#c98a00','…','Todavía no se acreditó el pago. Si pagaste en efectivo en un punto de pago, puede demorar unas horas.'],
+  pago_en_revision:['Pago en revisión','#c98a00','…','Mercado Pago está revisando el pago. Te avisamos cuando se apruebe.'],
+  pago_rechazado:['Pago rechazado','#c0392b','!','El pago no se aprobó. Podés volver a intentarlo con otro medio de pago.'],
+  pago_cancelado:['Pago cancelado','#c0392b','!','El pago se canceló. Podés hacer el pedido de nuevo cuando quieras.'],
+  efectivo_pendiente:['¡Pedido confirmado!','#1c9e50','✓','Lo pagás en efectivo al retirarlo o al recibirlo.'],
+  listo:['Pedido listo','#1c9e50','✓','Tu pedido está listo.'],enviado:['Pedido enviado','#1c9e50','✓','Tu pedido está en camino.'],
+  entregado:['Pedido entregado','#1c9e50','✓','¡Gracias por tu compra!'],cancelado:['Pedido cancelado','#c0392b','!','Este pedido fue cancelado.']};
+async function mostrarPedido(id,intento=0){
+  const dl=$('okdlg');let d;
+  try{const r=await fetch('/api/pedido?id='+encodeURIComponent(id));d=await r.json();if(!r.ok)throw 0}catch(e){d=null}
+  const e=d?EST[d.estado]||EST.pago_pendiente:['No encontramos el pedido','#c0392b','!','Si ya pagaste, guardá el comprobante de Mercado Pago y consultanos.'];
+  $('okico').style.background=e[1];$('okico').textContent=e[2];$('oktit').textContent=e[0];$('okmsg').textContent=e[3];
+  $('okid').textContent='Pedido '+id;$('okid').hidden=!d;
+  $('okitems').innerHTML=d?d.items.map(i=>`<li>${i.qty} × ${esc(i.nombre)}${i.tam?' '+esc(i.tam):''}</li>`).join('')+`<li><b>Total productos: ${money(d.total)}</b></li>`+(d.entrega.tipo==='retiro'?`<li>Retiro en ${esc(d.entrega.sucursal)}</li>`:'<li>Envío a domicilio (el envío se paga al recibir)</li>'):'';
+  if(!dl.open){try{dl.showModal()}catch(x){dl.setAttribute('open','')}}
+  if(d&&['pagado','pago_pendiente','pago_en_revision','efectivo_pendiente'].includes(d.estado)){cart={};save();drawCart();drawGrid()}
+  if(d&&d.estado==='pago_pendiente'&&d.pago!=='efectivo'&&intento<4)setTimeout(()=>mostrarPedido(id,intento+1),4000);
+}
+$('okclose').addEventListener('click',()=>{$('okdlg').close();try{const u=new URL(location.href);u.searchParams.delete('pedido');u.searchParams.delete('collection_id');history.replaceState(null,'',u.pathname+u.hash)}catch(e){}});
+items.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;const id=b.dataset.id;if(b.dataset.d==='x')delete cart[id];else{cart[id]=(cart[id]||0)+Number(b.dataset.d);if(cart[id]<=0)delete cart[id]}save();drawCart();drawGrid()});
+nota.addEventListener('input',drawCart);
+const syncEnt=()=>{const env=rv('entrega')==='envio';$('boxEnvio').hidden=!env;$('boxRetiro').hidden=env;$('efNote').textContent=env?'Al recibir el envío':'Al retirar en la sucursal'};
+document.querySelectorAll('input[name=entrega],input[name=pago]').forEach(r=>r.addEventListener('change',()=>{syncEnt();drawCart()}));
+DATOS.forEach(k=>$(k).addEventListener('input',()=>{saveDatos();drawCart()}));$('sucursal').addEventListener('change',drawCart);syncEnt();
+const dlg=document.getElementById('ficha');let cur=-1;
+function openFicha(i){const p=P[i];if(!p)return;cur=i;const f=FI[p[10]]||['',[]];
+  document.getElementById('fimg').className='fimg'+(p[9]?'':' draw');
+  document.getElementById('fimg').innerHTML=p[9]?`<img src="img/${p[9]}" alt="${esc(p[0])}">`:pack(p[4],p[5],220);
+  document.getElementById('fmeta').innerHTML=[p[1],p[3],p[8]?'Nuevo':''].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join('');
+  document.getElementById('fname').textContent=p[0];
+  const sib=P.map((q,j)=>[q,j]).filter(([q])=>q[10]&&q[10]===p[10]&&q[0]===p[0]&&q[1]===p[1]);
+  document.getElementById('fsizes').innerHTML=sib.length>1?sib.map(([q,j])=>`<button data-sz="${j}" aria-pressed="${j===i}">${esc(q[2]||'Único')}</button>`).join(''):(p[2]?`<span class="fmeta"><span>${esc(p[2])}</span></span>`:'');
+  document.getElementById('fprice').innerHTML=priceHtml(p);
+  document.getElementById('fdesc').textContent=f[0]||'Consultanos por WhatsApp y te contamos todo sobre este producto.';
+  document.getElementById('fmodo').innerHTML=f[1].length?'<h3>Modo de uso</h3><ol class="steps">'+f[1].map(s=>`<li${s.startsWith('Antes de cada coloración')?' class="warn"':''}>${esc(s)}</li>`).join('')+'</ol>':'';
+  const ad=document.getElementById('fadd');ad.hidden=!p[6];ad.textContent=cart[i]?'Agregar otro':'Agregar al pedido';
+  if(!dlg.open){try{dlg.showModal()}catch(e){dlg.setAttribute('open','')}}
+  dlg.querySelector('.fbody').scrollTop=0;
+  try{if(location.hash!=='#producto-'+i)history.replaceState(null,'','#producto-'+i)}catch(e){}
+}
+const clearHash=()=>{try{if(location.hash.startsWith('#producto-'))history.replaceState(null,'',location.pathname+location.search)}catch(e){}};
+function closeFicha(){if(dlg.open)dlg.close();cur=-1;clearHash()}
+document.getElementById('fclose').addEventListener('click',closeFicha);
+dlg.addEventListener('click',e=>{if(e.target===dlg)closeFicha();const s=e.target.closest('[data-sz]');if(s)openFicha(+s.dataset.sz)});
+dlg.addEventListener('close',()=>{cur=-1;clearHash()});
+document.getElementById('fadd').addEventListener('click',()=>{if(cur<0||!P[cur][6])return;cart[cur]=(cart[cur]||0)+1;save();drawCart();drawGrid();document.getElementById('fadd').textContent='Agregado ✓'});
+const fromHash=()=>{const m=location.hash.match(/^#producto-(\d+)$/);if(m)openFicha(+m[1])};
+window.addEventListener('hashchange',fromHash);
+drawChips();drawGrid();drawCart();fromHash();
+{const pid=new URLSearchParams(location.search).get('pedido');if(pid)mostrarPedido(pid)}
+}
+</script>
+</body>
+</html>
