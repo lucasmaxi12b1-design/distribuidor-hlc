@@ -165,7 +165,7 @@ p{margin:0}
 .brandhead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:16px}
 .brandhead p{color:var(--soft);max-width:44em;margin-top:6px}
 .brandhead h2{font-size:clamp(22px,2.8vw,30px);font-weight:800;text-transform:uppercase;letter-spacing:.02em}
-.fidmark{font:500 26px/1 Georgia,"Times New Roman",serif;letter-spacing:.06em}
+.tohome{text-decoration:none;color:inherit}.frmark.tohome{color:#fff}.fidmark{font:500 26px/1 Georgia,"Times New Roman",serif;letter-spacing:.06em}
 .frmark{display:inline-block;background:var(--teal);color:#fff;font-weight:800;padding:6px 14px;letter-spacing:.04em}
 .tools{display:grid;gap:12px;margin-bottom:20px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
@@ -302,7 +302,7 @@ dialog#ficha::backdrop{background:rgba(0,0,0,.55)}
 <header class="head">
   <div class="wrap hrow">
     <button class="menu-btn" id="openMenu" aria-label="Abrir menú" aria-controls="menu" aria-expanded="false"><span class="burger"><i></i><i></i><i></i></span><span class="mtxt">MENÚ</span></button>
-    <a class="hlogo" href="#inicio" aria-label="Distribuidor HLC, inicio"><img src="img/logo.png" alt="Distribuidor HLC, artículos de belleza"></a>
+    <a class="hlogo tohome" href="#inicio" aria-label="Distribuidor HLC, inicio"><img src="img/logo.png" alt="Distribuidor HLC, artículos de belleza"></a>
     <div class="hright">
       <nav class="hnav" aria-label="Secciones"><a href="#tienda">Fidelité</a><a href="#frilayp">Frilayp</a><a href="#locales">Locales</a></nav>
       <button class="cart-btn" id="openCart" aria-label="Abrir carrito" aria-controls="carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6"/></svg><b id="count">0</b></button>
@@ -388,7 +388,7 @@ dialog#ficha::backdrop{background:rgba(0,0,0,.55)}
 <section class="sec" id="tienda">
   <div class="wrap">
     <div class="brandhead">
-      <div><span class="fidmark">FIDELITÉ</span><h2>Tienda Fidelité</h2><p>Precios al público actualizados. Sujetos a stock.</p></div>
+      <div><a class="fidmark tohome" href="#inicio" title="Ir al inicio">FIDELITÉ</a><h2>Tienda Fidelité</h2><p>Precios al público actualizados. Sujetos a stock.</p></div>
     </div>
     <div class="tools">
       <input class="bq" id="q" type="search" placeholder="Buscar en Fidelité: keratina, revelador 20 vol, argán…" aria-label="Buscar producto Fidelité">
@@ -402,7 +402,7 @@ dialog#ficha::backdrop{background:rgba(0,0,0,.55)}
 <section class="sec frsec" id="frilayp">
   <div class="wrap">
     <div class="brandhead">
-      <div><span class="frmark">FRILAYP</span><h2 style="margin-top:10px">Cuidado capilar con 30 años de experiencia</h2><p>Marca familiar argentina desde 1995. Ácido hialurónico, biotina y colágeno, BTX, rulos, styling y color.</p></div>
+      <div><a class="frmark tohome" href="#inicio" title="Ir al inicio">FRILAYP</a><h2 style="margin-top:10px">Cuidado capilar con 30 años de experiencia</h2><p>Marca familiar argentina desde 1995. Ácido hialurónico, biotina y colágeno, BTX, rulos, styling y color.</p></div>
     </div>
     <div class="tools">
       <input class="bq" id="q2" type="search" placeholder="Buscar en Frilayp: rulos, BTX, ColorExtreme 7.1…" aria-label="Buscar producto Frilayp">
@@ -522,6 +522,8 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('.prod .add');if(b){addToCart(b.dataset.id,b)}
 });
 
+/* logos: volver al inicio */
+document.querySelectorAll('.tohome').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();closeDrawer(true);$('q0').value='';ALL.q='';ALL.pred=null;markNeed(null);$('resultados').hidden=true;try{history.replaceState(null,'',location.pathname)}catch(_){}window.scrollTo({top:0,behavior:'smooth'})}));
 /* buscador general */
 let qt;
 $('q0').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{ALL.pred=null;markNeed(null);ALL.q=e.target.value;ALL.shown=PAGE;const has=!!ALL.q.trim();$('resultados').hidden=!has;if(has){const n=ALL.draw();$('rtitle').textContent=n?`Resultados para "${ALL.q.trim()}" (${n})`:`Sin resultados para "${ALL.q.trim()}"`}},180)});
