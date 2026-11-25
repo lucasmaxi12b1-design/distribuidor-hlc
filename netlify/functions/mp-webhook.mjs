@@ -1,6 +1,7 @@
 // Mercado Pago avisa acá cuando cambia un pago. Volvemos a consultar el pago con nuestro token,
 // así un aviso falso no puede marcar nada como pagado.
 import { orders, json } from "../lib/store.mjs";
+import { avisar, textoPedido } from "../lib/aviso.mjs";
 
 const ESTADOS = { approved: "pagado", authorized: "pagado", in_process: "pago_en_revision", pending: "pago_pendiente",
   in_mediation: "pago_en_revision", rejected: "pago_rechazado", cancelled: "pago_cancelado", refunded: "devuelto", charged_back: "devuelto" };
@@ -32,7 +33,10 @@ export default async (req) => {
   pedido.mp = { ...(pedido.mp || {}), pagoId: String(pay.id), estadoMP: pay.status, detalle: pay.status_detail,
     metodo: pay.payment_method_id, tipo: pay.payment_type_id, cuotas: pay.installments, monto: pay.transaction_amount,
     actualizado: new Date().toISOString() };
+  const avisar_ = !pedido.avisado && ["pagado", "pago_en_revision"].includes(pedido.estado);
+  if (avisar_) pedido.avisado = true;
   await store.setJSON(id, pedido);
+  if (avisar_) await avisar(textoPedido(pedido, url.origin, pedido.estado === "pagado" ? "💳 Nuevo pedido PAGADO" : "⏳ Nuevo pedido, pago en revisión"));
   return json({ ok: true });
 };
 

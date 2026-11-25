@@ -1,5 +1,6 @@
 // Crea un pedido. Los precios se calculan acá con el catálogo del servidor, nunca con lo que manda el navegador.
 import { orders, json, newId, clean, CATALOG, SUCURSALES } from "../lib/store.mjs";
+import { avisar, textoPedido } from "../lib/aviso.mjs";
 
 export default async (req, context) => {
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
@@ -46,7 +47,9 @@ export default async (req, context) => {
   const store = orders();
 
   if (pago === "efectivo") {
+    pedido.avisado = true;
     await store.setJSON(id, pedido);
+    await avisar(textoPedido(pedido, new URL(req.url).origin, "🛍️ Nuevo pedido (paga en efectivo)"));
     return json({ id, estado: pedido.estado, total });
   }
 
