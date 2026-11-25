@@ -68,7 +68,7 @@ button,select,input{font:inherit}
   <p class="err" id="lerr" hidden></p>
 </div>
 <div id="appView" hidden>
-  <div class="top"><h1>Pedidos</h1><span id="upd" class="small" style="color:var(--soft);font-size:14px"></span><button class="btn ghost" id="reload">Actualizar</button><button class="btn ghost" id="waTest">Probar aviso WhatsApp</button><button class="btn ghost" id="logout">Salir</button></div>
+  <div class="top"><h1>Pedidos</h1><span id="upd" class="small" style="color:var(--soft);font-size:14px"></span><button class="btn ghost" id="reload">Actualizar</button><button class="btn ghost" id="waTest">Probar avisos</button><button class="btn ghost" id="logout">Salir</button></div>
   <div class="wrap">
     <div class="stats" id="stats"></div>
     <div class="filters" id="filters"></div>
@@ -89,8 +89,8 @@ let pass='',data=[],fil='activos',q='';
 try{pass=sessionStorage.getItem('hlc-admin')||''}catch(e){}
 document.addEventListener('click',async e=>{if(e.target.id!=='waTest')return;const b=e.target;b.disabled=true;b.textContent='Enviando…';
  try{const r=await fetch('/api/admin/aviso-prueba',{method:'POST',headers:{'x-admin-pass':pass}});const d=await r.json().catch(()=>({}));
-  b.textContent=r.ok?'Aviso enviado ✓':(d.motivo==='sin_configurar'?'Falta configurar en Netlify':'No se pudo enviar'+(d.respuesta?': '+d.respuesta.slice(0,80):''));}
- catch(_){b.textContent='No se pudo enviar'}setTimeout(()=>{b.disabled=false;b.textContent='Probar aviso WhatsApp'},6000)});
+  const t=(x,n)=>!x?'':x.ok?n+' ✓':x.motivo==='sin_configurar'?n+': sin configurar':n+': error'+(x.respuesta?' ('+x.respuesta.slice(0,60)+')':'');b.textContent=[t(d.whatsapp,'WhatsApp'),t(d.mail,'Mail')].filter(Boolean).join(' · ')||'No se pudo enviar';}
+ catch(_){b.textContent='No se pudo enviar'}setTimeout(()=>{b.disabled=false;b.textContent='Probar avisos'},9000)});
 async function api(method,body){const r=await fetch('/api/admin/pedidos',{method,headers:{'x-admin-pass':pass,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const d=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error(d.error||'Error'),{status:r.status});return d}
 async function load(){
   try{const d=await api('GET');data=d.pedidos||[];$('loginView').hidden=true;$('appView').hidden=false;$('upd').textContent='Actualizado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});draw()}
