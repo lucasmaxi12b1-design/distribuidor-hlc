@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* =========================================================
+   🎨 COLORES DE LA MARCA
+   Cambiá los códigos de color acá y se actualiza toda la web.
+   (Podés elegir colores en https://htmlcolorcodes.com/es/)
+   ========================================================= */
+@theme {
+  --color-crema: #faf7f2; /* fondo principal */
+  --color-arena: #f1ebe1; /* fondo de secciones alternadas */
+  --color-salvia: #5f7a6b; /* color principal (botones, títulos) */
+  --color-salvia-oscuro: #475d51; /* botones al pasar el mouse */
+  --color-terracota: #c47a5a; /* detalles y acentos */
+  --color-tinta: #2e2a26; /* texto principal */
+  --color-suave: #6b645c; /* texto secundario */
+
+  /* Tipografías (se cargan en app/layout.tsx) */
+  --font-sans: var(--font-texto);
+  --font-titulo: var(--font-titulos);
+}
+
+html {
+  scroll-behavior: smooth;
+  /* deja lugar para el menú fijo al saltar a una sección */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--color-crema);
+  color: var(--color-tinta);
+}
+
+/* Títulos con la tipografía serif, más cálida */
+h1,
+h2,
+h3 {
+  font-family: var(--font-titulo);
+  letter-spacing: -0.01em;
+}
