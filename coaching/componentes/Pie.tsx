@@ -10,7 +10,7 @@ export default function Pie() {
         <p>{sitio.pie.frase}</p>
         <BotonInstalar />
         <p className="text-sm text-white/60">
-          © {sitio.nombre} · Coaching online por videollamada
+          © {sitio.nombre} · Clases personalizadas por videollamada
         </p>
       </div>
     </footer>

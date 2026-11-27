@@ -31,7 +31,7 @@ export default function Reservar() {
             <div className="overflow-hidden rounded-3xl border border-tinta/10 bg-white">
               <iframe
                 src={linkEmbebido(linkReservas)}
-                title="Calendario para reservar una sesión"
+                title="Calendario para reservar una clase"
                 className="h-[720px] w-full"
                 loading="lazy"
               />
@@ -49,7 +49,7 @@ export default function Reservar() {
           <div className="mx-auto max-w-xl rounded-3xl bg-crema p-8 text-center md:p-12">
             <p className="text-lg leading-relaxed text-suave">{reservas.sinCalendario}</p>
             <a
-              href={linkWhatsapp("¡Hola! Quiero reservar una sesión.")}
+              href={linkWhatsapp("¡Hola! Quiero reservar una clase.")}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 inline-block rounded-full bg-salvia px-8 py-4 font-medium text-white transition hover:bg-salvia-oscuro"
