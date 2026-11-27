@@ -8,6 +8,7 @@
 @theme {
   --color-crema: #faf7f2; /* fondo principal */
   --color-arena: #f1ebe1; /* fondo de secciones alternadas */
+  --color-salvia-claro: #e6ece7; /* fondo de la sección de reservas */
   --color-salvia: #5f7a6b; /* color principal (botones, títulos) */
   --color-salvia-oscuro: #475d51; /* botones al pasar el mouse */
   --color-terracota: #c47a5a; /* detalles y acentos */

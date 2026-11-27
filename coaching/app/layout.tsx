@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { sitio } from "@/contenido/sitio";
+import RegistrarServiceWorker from "@/componentes/RegistrarServiceWorker";
 
 // Tipografía para los títulos (serif, cálida)
 const fuenteTitulos = Fraunces({
@@ -32,6 +33,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: { card: "summary_large_image" },
+  // Para que en iPhone se vea bien cuando se instala como app
+  appleWebApp: { capable: true, title: sitio.marca, statusBarStyle: "default" },
 };
 
 // Color de la barra del navegador en el celular
@@ -42,7 +45,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-AR" className={`${fuenteTitulos.variable} ${fuenteTexto.variable} antialiased`}>
-      <body className="min-h-screen">{children}</body>
+      <body className="min-h-screen">
+        {children}
+        <RegistrarServiceWorker />
+      </body>
     </html>
   );
 }

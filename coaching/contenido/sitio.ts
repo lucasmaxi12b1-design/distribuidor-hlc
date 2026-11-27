@@ -124,6 +124,7 @@ export const sitio = {
         precio: "$35.000", // ✏️ REVISAR
         incluye: ["Videollamada de 60 min", "Resumen con tus próximos pasos"],
         destacado: false,
+        linkPago: "", // 💳 link de pago de Mercado Pago (para más adelante)
       },
       {
         nombre: "Programa 4 semanas", // ✏️ REVISAR
@@ -133,6 +134,7 @@ export const sitio = {
         precio: "$120.000", // ✏️ REVISAR
         incluye: ["4 videollamadas", "Ejercicios entre sesiones", "Consultas por WhatsApp"],
         destacado: true,
+        linkPago: "", // 💳 link de pago de Mercado Pago (para más adelante)
       },
       {
         nombre: "Programa 3 meses", // ✏️ REVISAR
@@ -142,10 +144,15 @@ export const sitio = {
         precio: "$330.000", // ✏️ REVISAR
         incluye: ["12 videollamadas", "Plan personalizado", "Seguimiento por WhatsApp"],
         destacado: false,
+        linkPago: "", // 💳 link de pago de Mercado Pago (para más adelante)
       },
     ],
-    // Pagos online: por ahora apagado. Más adelante, para sumar Mercado Pago,
-    // pegá en cada programa un link de pago (ver componentes/Servicios.tsx).
+    // 💳 PAGOS ONLINE (Mercado Pago) — por ahora apagado.
+    // Para activarlo más adelante:
+    //   1. En Mercado Pago creá un "Link de pago" para cada programa.
+    //   2. Pegá cada link en "linkPago" del programa que corresponde.
+    //   3. Cambiá false por true acá abajo.
+    // En cada tarjeta va a aparecer el botón "Pagar con Mercado Pago".
     pagosOnline: false,
   },
 
@@ -223,5 +230,23 @@ export const sitio = {
     bajada:
       "Escribime por WhatsApp o dejame tu mensaje y te respondo dentro de las 24 horas hábiles.", // ✏️ REVISAR
     botonWhatsapp: "Escribime por WhatsApp",
+  },
+
+  // ---------------------------------------------------------------
+  // RESERVAS (la sección con el calendario)
+  // El link del calendario se carga más arriba, en "linkReservas".
+  // ---------------------------------------------------------------
+  reservas: {
+    titulo: "Reservá tu sesión",
+    bajada: "Elegí el día y el horario que te queden cómodos. Vas a recibir la confirmación y el link de la videollamada por mail.", // ✏️ REVISAR
+    // Texto que se muestra mientras no hayas cargado el link del calendario:
+    sinCalendario: "Muy pronto vas a poder reservar acá mismo. Mientras tanto, escribime y coordinamos un horario.",
+  },
+
+  // ---------------------------------------------------------------
+  // PIE DE PÁGINA
+  // ---------------------------------------------------------------
+  pie: {
+    frase: "Coaching online para animarte a cambiar.", // ✏️ REVISAR
   },
 };

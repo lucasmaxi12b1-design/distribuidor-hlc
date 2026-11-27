@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Conecta Tailwind CSS con el compilador de Next.js (no tocar)
   turbopack: {
     rules: {
       "*.css": {
@@ -11,6 +11,26 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // Encabezados de seguridad recomendados para PWAs
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+      {
+        // El service worker no se guarda en caché, así siempre se usa el último
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+        ],
+      },
+    ];
   },
 };
 
