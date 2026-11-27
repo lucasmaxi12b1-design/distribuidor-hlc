@@ -18,11 +18,16 @@ const numero = (fd: FormData, campo: string) => Number(fd.get(campo));
 const emailValido = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const programas = () => sitio.servicios.lista.map((p) => p.nombre);
 
+// Mientras la base de datos no esté configurada, avisamos en vez de mostrar un error
+const SIN_BASE: Estado = { error: "El sistema se está terminando de configurar. Probá de nuevo en un rato." };
+const baseLista = () => Boolean(process.env.DATABASE_URL);
+
 // =================================================================
 // CUENTAS
 // =================================================================
 
 export async function registrarse(_: Estado, fd: FormData): Promise<Estado> {
+  if (!baseLista()) return SIN_BASE;
   const nombre = texto(fd, "nombre");
   const email = texto(fd, "email").toLowerCase();
   const clave = String(fd.get("clave") ?? "");
@@ -44,6 +49,7 @@ export async function registrarse(_: Estado, fd: FormData): Promise<Estado> {
 }
 
 export async function ingresar(_: Estado, fd: FormData): Promise<Estado> {
+  if (!baseLista()) return SIN_BASE;
   const email = texto(fd, "email").toLowerCase();
   const clave = String(fd.get("clave") ?? "");
 
@@ -71,6 +77,7 @@ export async function salir() {
 // =================================================================
 
 export async function enviarConsulta(_: Estado, fd: FormData): Promise<Estado> {
+  if (!baseLista()) return SIN_BASE;
   const nombre = texto(fd, "nombre");
   const email = texto(fd, "email");
   const mensaje = texto(fd, "mensaje");
