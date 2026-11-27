@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  // La base de datos del modo demo se carga tal cual (trae archivos propios)
+  serverExternalPackages: ["@electric-sql/pglite"],
   // Conecta Tailwind CSS con el compilador de Next.js (no tocar)
   turbopack: {
     rules: {

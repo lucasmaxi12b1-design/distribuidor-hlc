@@ -8,6 +8,7 @@ import { db, prepararBase } from "@/lib/db";
 import { cifrarClave, claveCorrecta } from "@/lib/claves";
 import { cerrarSesion, esEmailAdmin, iniciarSesion, requerirAdmin, requerirUsuario } from "@/lib/sesion";
 import { sitio } from "@/contenido/sitio";
+import { modoDemo } from "@/lib/demo";
 
 // Estado que devuelven los formularios (para mostrar errores o avisos)
 export type Estado = { error?: string; ok?: string } | undefined;
@@ -20,7 +21,7 @@ const programas = () => sitio.servicios.lista.map((p) => p.nombre);
 
 // Mientras la base de datos no esté configurada, avisamos en vez de mostrar un error
 const SIN_BASE: Estado = { error: "El sistema se está terminando de configurar. Probá de nuevo en un rato." };
-const baseLista = () => Boolean(process.env.DATABASE_URL);
+const baseLista = () => Boolean(process.env.DATABASE_URL) || modoDemo();
 
 // =================================================================
 // CUENTAS

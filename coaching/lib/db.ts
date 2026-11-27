@@ -5,6 +5,8 @@
 import "server-only";
 import postgres from "postgres";
 import { ejerciciosIniciales } from "@/contenido/ejercicios";
+import { CUENTAS_DEMO, crearBaseDemo, modoDemo } from "./demo";
+import { cifrarClave } from "./claves";
 
 // Reutilizamos la conexión mientras el servidor está prendido
 const global = globalThis as unknown as { conexion?: ReturnType<typeof postgres> };
@@ -12,6 +14,7 @@ const global = globalThis as unknown as { conexion?: ReturnType<typeof postgres>
 // Devuelve la conexión (la abre la primera vez que se usa)
 export function db() {
   if (!global.conexion) {
+    if (modoDemo()) throw new Error("En modo demo la base se abre con prepararBase().");
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error("Falta DATABASE_URL: configurá la base de datos (ver README).");
     // En la nube la conexión va cifrada (ssl). En tu compu (localhost) no hace falta.
@@ -113,8 +116,54 @@ async function cargarEjerciciosIniciales() {
   });
 }
 
+// MODO DEMO: carga cuentas y datos de ejemplo para poder recorrer el sistema
+async function cargarDatosDemo() {
+  const sql = db();
+  const claveCoach = await cifrarClave(CUENTAS_DEMO.coach.clave);
+  const claveAlumna = await cifrarClave(CUENTAS_DEMO.alumna.clave);
+  await sql`insert into usuarios (nombre, email, clave_hash, es_admin)
+            values ('Lisandro', ${CUENTAS_DEMO.coach.email}, ${claveCoach}, true)`;
+  const [ana] = await sql<{ id: number }[]>`
+    insert into usuarios (nombre, email, clave_hash, programa)
+    values ('Ana Pérez', ${CUENTAS_DEMO.alumna.email}, ${claveAlumna}, 'Programa 4 semanas') returning id`;
+
+  // Ejercicios del programa de Ana (el primero, hecho y con devolución)
+  await sql`insert into asignaciones (ejercicio_id, usuario_id)
+            select id, ${ana.id} from ejercicios where programa = 'Programa 4 semanas' order by id`;
+  await sql`update asignaciones set hecho_en = now() - interval '2 days',
+              devolucion = '¡Muy buen comienzo, Ana! Lo charlamos en la clase.'
+            where id = (select min(id) from asignaciones where usuario_id = ${ana.id})`;
+
+  // Una clase EN CURSO (para probar la videollamada) y horarios libres.
+  // Las horas se calculan en la base de datos, en hora de Argentina.
+  await sql`insert into turnos (inicio, duracion_min, sala, alumno_id, reservado_en)
+            values (now() - interval '5 minutes', 60, 'lisandro-coaching-demo-' || md5(random()::text), ${ana.id}, now())`;
+  for (const [dias, hora] of [[1, 18], [2, 10], [3, 19], [7, 18], [8, 10]]) {
+    await sql`insert into turnos (inicio, sala) values (
+      (date_trunc('day', now() at time zone 'America/Argentina/Buenos_Aires')
+        + make_interval(days => ${dias}::int, hours => ${hora}::int)) at time zone 'America/Argentina/Buenos_Aires',
+      'lisandro-coaching-demo-' || md5(random()::text))`;
+  }
+
+  // Mensajes y una consulta de ejemplo
+  await sql`insert into mensajes (usuario_id, de_admin, texto, leido) values
+    (${ana.id}, false, 'Hola Lisandro, ya hice el primer ejercicio. ¿Lo vemos en la clase?', true),
+    (${ana.id}, true, '¡Genial, Ana! Sí, lo vemos hoy. Nos encontramos en la sala.', false)`;
+  await sql`insert into consultas (nombre, email, mensaje)
+            values ('Martín', 'martin@ejemplo.com', '¿Las clases sirven si estoy terminando la facultad?')`;
+}
+
 // Llamar antes de usar la base: crea las tablas si todavía no existen
 export function prepararBase() {
+  if (modoDemo()) {
+    preparada ??= crearBaseDemo().then(async (base) => {
+      global.conexion = base;
+      await base.unsafe(ESQUEMA);
+      await cargarEjerciciosIniciales();
+      await cargarDatosDemo();
+    });
+    return preparada;
+  }
   preparada ??= db().unsafe(ESQUEMA).then(cargarEjerciciosIniciales).catch((e) => {
     preparada = null; // si falló, que lo vuelva a intentar la próxima vez
     throw e;

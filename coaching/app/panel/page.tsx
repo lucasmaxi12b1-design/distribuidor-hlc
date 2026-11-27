@@ -20,7 +20,7 @@ export default function Panel() {
 async function Contenido() {
   const u = await requerirAdmin();
   const [r, agenda] = await Promise.all([resumenPanel(), agendaProxima()]);
-  const ahora = horaActual();
+  const ahora = await horaActual();
   const proximas = agenda.filter((t) => t.alumno_id && t.inicio.getTime() + t.duracion_min * 60_000 > ahora).slice(0, 5);
 
   const cifras = [

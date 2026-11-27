@@ -1,6 +1,7 @@
 // Diseño de las pantallas de ingreso y registro (tarjeta centrada)
 import Link from "next/link";
 import { sitio } from "@/contenido/sitio";
+import { CuentasDemo } from "./AvisoDemo";
 
 export default function PantallaCuenta({ titulo, bajada, children }: { titulo: string; bajada: string; children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function PantallaCuenta({ titulo, bajada, children }: { titulo: s
       <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-sm ring-1 ring-tinta/5 md:p-8">
         <h1 className="text-2xl font-medium text-tinta">{titulo}</h1>
         <p className="mt-2 mb-6 text-suave">{bajada}</p>
+        <CuentasDemo />
         {children}
       </div>
     </main>

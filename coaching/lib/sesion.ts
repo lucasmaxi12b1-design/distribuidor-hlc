@@ -1,9 +1,11 @@
 // Sesiones: recuerdan quién inició sesión, con una "cookie" en el navegador.
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { createHash, randomBytes } from "node:crypto";
 import { db, prepararBase } from "./db";
+import { modoDemo } from "./demo";
 
 const COOKIE = "sesion";
 const DIAS = 30; // la sesión dura 30 días
@@ -41,6 +43,7 @@ export async function iniciarSesion(usuarioId: number) {
 export async function cerrarSesion() {
   const almacen = await cookies();
   const token = almacen.get(COOKIE)?.value;
+  if (token) await prepararBase();
   if (token) await db()`delete from sesiones where token_hash = ${cifrar(token)}`;
   almacen.delete(COOKIE);
 }
@@ -49,6 +52,8 @@ export async function cerrarSesion() {
 export async function usuarioActual(): Promise<Usuario | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return null;
+  // La base del modo demo lee la hora internamente: que no se arme por adelantado
+  if (modoDemo()) await connection();
   await prepararBase();
   const [u] = await db()<Usuario[]>`
     select u.id, u.nombre, u.email, u.es_admin, u.programa

@@ -43,7 +43,7 @@ async function Contenido({ params }: { params: PageProps<"/panel/alumnos/[id]">[
 
   const yaAsignados = new Set(asignados.map((a) => a.ejercicio_id));
   const paraAsignar = todos.filter((e) => !yaAsignados.has(e.id));
-  const ahora = horaActual();
+  const ahora = await horaActual();
   const proximas = clases.filter((c) => c.inicio.getTime() > ahora);
 
   return (

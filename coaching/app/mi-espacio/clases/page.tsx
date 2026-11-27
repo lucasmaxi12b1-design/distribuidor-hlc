@@ -32,7 +32,7 @@ async function Contenido({ searchParams }: { searchParams: PageProps<"/mi-espaci
   const u = await requerirAlumno();
   const { aviso } = await searchParams;
   const [mias, libres] = await Promise.all([clasesDeAlumno(u.id), turnosLibres()]);
-  const ahora = horaActual();
+  const ahora = await horaActual();
   const proximas = mias.filter((c) => c.inicio.getTime() + c.duracion_min * 60_000 > ahora);
   const mensaje = typeof aviso === "string" ? AVISOS[aviso] : undefined;
 

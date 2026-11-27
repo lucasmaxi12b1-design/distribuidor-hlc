@@ -1,3 +1,5 @@
+import { connection } from "next/server";
+
 // Formatos de fecha y hora, siempre en hora de Argentina.
 const ZONA = "America/Argentina/Buenos_Aires";
 
@@ -39,8 +41,9 @@ export function porDia<T extends { inicio: Date }>(lista: T[]) {
   return [...grupos.entries()];
 }
 
-// Hora actual en milisegundos. Las pantallas privadas se arman en el servidor
-// una vez por visita, así que la hora es la del momento en que se abre la página.
-export function horaActual() {
+// Hora actual en milisegundos, tomada en el momento de cada visita
+// (connection() le avisa a Next.js que no la calcule por adelantado).
+export async function horaActual() {
+  await connection();
   return Date.now();
 }

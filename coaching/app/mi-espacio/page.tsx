@@ -24,7 +24,7 @@ async function Contenido() {
     mensajesSinLeerAlumno(u.id),
   ]);
 
-  const ahora = horaActual();
+  const ahora = await horaActual();
   const hechos = ejercicios.filter((e) => e.hecho_en).length;
   const pendientes = ejercicios.length - hechos;
   const porcentaje = ejercicios.length ? Math.round((hechos / ejercicios.length) * 100) : 0;

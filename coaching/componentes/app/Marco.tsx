@@ -5,10 +5,12 @@ import { Suspense } from "react";
 import { sitio } from "@/contenido/sitio";
 import { salir } from "@/app/acciones";
 import Navegacion, { MenuBase, type ItemMenu } from "./Navegacion";
+import { FranjaDemo } from "./AvisoDemo";
 
 export default function Marco({ items, etiqueta, children }: { items: ItemMenu[]; etiqueta: string; children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
+      <FranjaDemo />
       <header className="sticky top-0 z-30 border-b border-tinta/5 bg-crema/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-5">
           <Link href="/" className="font-titulo text-lg font-semibold text-salvia">

@@ -25,7 +25,7 @@ export default function Agenda() {
 async function Lista() {
   await requerirAdmin();
   const turnos = await agendaProxima();
-  const ahora = horaActual();
+  const ahora = await horaActual();
 
   return (
     <div className="space-y-6">
