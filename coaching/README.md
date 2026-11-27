@@ -21,6 +21,7 @@ Los textos marcados con `✏️ REVISAR` son de ejemplo: cambialos por los tuyos
 | Mi mail y redes (en la página)            | `contenido/sitio.ts` → `contacto`                                         |
 | Mi foto                                   | Subí `public/foto-perfil.jpg` y poné `foto: "/foto-perfil.jpg"` en `sobreMi` |
 | Agregar testimonios reales                | `contenido/sitio.ts` → `testimonios.lista`                                |
+| Ejercicios que vienen cargados            | `contenido/ejercicios.ts` (se cargan solos la primera vez; después se editan desde Panel → Ejercicios) |
 | Activar Mercado Pago                      | `contenido/sitio.ts` → `linkPago` de cada programa y `pagosOnline: true`  |
 | Colores                                   | `app/globals.css` (arriba de todo)                                        |
 
@@ -79,7 +80,8 @@ Las tablas se crean solas la primera vez que alguien usa el sistema.
 - **Agenda:** cargás horarios libres (un día suelto o repetido varias semanas). Ves quién reservó.
 - **Alumnos:** tocás un alumno para asignarle programa, darle ejercicios (con fecha opcional),
   dejarle devoluciones, responderle mensajes o generarle una contraseña nueva si se la olvidó.
-- **Ejercicios:** los creás una vez. Si les ponés un programa, se asignan solos a todos los alumnos
+- **Ejercicios:** ya vienen cargados ejercicios para cada programa y una biblioteca extra. Los podés editar,
+  borrar o crear nuevos. Los creás una vez. Si les ponés un programa, se asignan solos a todos los alumnos
   de ese programa (también a los que se sumen después).
 - **Consultas:** mensajes del formulario de la página, de personas que todavía no tienen cuenta.
 

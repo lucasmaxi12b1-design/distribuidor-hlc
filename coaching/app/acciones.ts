@@ -144,7 +144,7 @@ export async function asignarPrograma(fd: FormData) {
   await db()`update usuarios set programa = ${valor} where id = ${alumnoId} and not es_admin`;
   // Le asignamos todos los ejercicios de ese programa
   if (valor) {
-    const ejercicios = await db()<{ id: number }[]>`select id from ejercicios where programa = ${valor}`;
+    const ejercicios = await db()<{ id: number }[]>`select id from ejercicios where programa = ${valor} order by id`;
     for (const e of ejercicios) await asignar(e.id, alumnoId, null);
   }
   refresh();
@@ -165,6 +165,14 @@ export async function crearEjercicio(fd: FormData) {
     const alumnos = await db()<{ id: number }[]>`select id from usuarios where programa = ${valor}`;
     for (const a of alumnos) await asignar(e.id, a.id, null);
   }
+  refresh();
+}
+
+export async function editarEjercicio(fd: FormData) {
+  await requerirAdmin();
+  const titulo = texto(fd, "titulo");
+  if (!titulo) return;
+  await db()`update ejercicios set titulo = ${titulo}, descripcion = ${texto(fd, "descripcion")} where id = ${numero(fd, "id")}`;
   refresh();
 }
 

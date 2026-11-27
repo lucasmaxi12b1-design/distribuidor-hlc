@@ -4,6 +4,7 @@
 //  - En Vercel: se carga sola al crear la base Neon (ver README)
 import "server-only";
 import postgres from "postgres";
+import { ejerciciosIniciales } from "@/contenido/ejercicios";
 
 // Reutilizamos la conexión mientras el servidor está prendido
 const global = globalThis as unknown as { conexion?: ReturnType<typeof postgres> };
@@ -85,13 +86,36 @@ create table if not exists turnos (
   sala text not null unique,             -- nombre de la sala de videollamada
   reservado_en timestamptz
 );
+
+create table if not exists config (     -- notas internas del sistema
+  clave text primary key
+);
 `;
 
 let preparada: Promise<unknown> | null = null;
 
+// Carga los ejercicios de contenido/ejercicios.ts. Se hace UNA sola vez:
+// queda anotado en la tabla "config" para no volver a cargarlos.
+async function cargarEjerciciosIniciales() {
+  await db().begin(async (tx) => {
+    const primeraVez = await tx`
+      insert into config (clave) values ('ejercicios_iniciales') on conflict do nothing returning clave`;
+    if (!primeraVez.length) return;
+    for (const e of ejerciciosIniciales) {
+      await tx`insert into ejercicios (titulo, descripcion, programa) values (${e.titulo}, ${e.descripcion}, ${e.programa})`;
+    }
+    // Si ya había alumnos con programa, se los asignamos
+    await tx`
+      insert into asignaciones (ejercicio_id, usuario_id)
+      select e.id, u.id from ejercicios e join usuarios u on u.programa = e.programa
+      order by e.id
+      on conflict do nothing`;
+  });
+}
+
 // Llamar antes de usar la base: crea las tablas si todavía no existen
 export function prepararBase() {
-  preparada ??= db().unsafe(ESQUEMA).catch((e) => {
+  preparada ??= db().unsafe(ESQUEMA).then(cargarEjerciciosIniciales).catch((e) => {
     preparada = null; // si falló, que lo vuelva a intentar la próxima vez
     throw e;
   });

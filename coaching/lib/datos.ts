@@ -62,7 +62,7 @@ export async function ejerciciosDeAlumno(usuarioId: number) {
            a.hecho_en, a.devolucion
     from asignaciones a join ejercicios e on e.id = a.ejercicio_id
     where a.usuario_id = ${usuarioId}
-    order by (a.hecho_en is not null), a.fecha_limite nulls last, a.creado`;
+    order by (a.hecho_en is not null), a.fecha_limite nulls last, a.creado, a.ejercicio_id`;
 }
 
 // Clases reservadas por un alumno
@@ -129,7 +129,7 @@ export async function listaEjercicios() {
       count(a.id)::int as asignados,
       count(a.hecho_en)::int as hechos
     from ejercicios e left join asignaciones a on a.ejercicio_id = e.id
-    group by e.id order by e.creado desc`;
+    group by e.id order by e.programa nulls last, e.id`;
 }
 
 // Turnos desde hoy en adelante (libres y reservados)
