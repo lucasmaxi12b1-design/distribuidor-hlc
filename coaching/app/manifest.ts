@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: sitio.marca,
     short_name: sitio.marca,
     description: sitio.seo.descripcion,
-    start_url: "/",
+    start_url: "/mi-espacio", // la app instalada abre directo en el espacio del alumno
     display: "standalone", // se abre como app, sin la barra del navegador
     background_color: "#faf7f2",
     theme_color: "#5f7a6b",

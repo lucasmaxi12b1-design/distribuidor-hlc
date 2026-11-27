@@ -10,7 +10,6 @@ import Reservar from "@/componentes/Reservar";
 import Preguntas from "@/componentes/Preguntas";
 import Contacto from "@/componentes/Contacto";
 import Pie from "@/componentes/Pie";
-import BotonWhatsappFlotante from "@/componentes/BotonWhatsappFlotante";
 
 export default function Home() {
   return (
@@ -27,7 +26,6 @@ export default function Home() {
         <Contacto />
       </main>
       <Pie />
-      <BotonWhatsappFlotante />
     </>
   );
 }

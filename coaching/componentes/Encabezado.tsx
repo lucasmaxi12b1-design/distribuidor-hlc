@@ -2,6 +2,7 @@
 
 // Encabezado fijo arriba: logo (nombre de la marca), menú y botón de reserva.
 // En el celular el menú se esconde detrás de un botón "☰".
+import Link from "next/link";
 import { useState } from "react";
 import { sitio } from "@/contenido/sitio";
 
@@ -23,6 +24,9 @@ export default function Encabezado() {
               {item.texto}
             </a>
           ))}
+          <Link href="/ingresar" className="text-sm font-medium text-salvia transition hover:text-salvia-oscuro">
+            Ingresar
+          </Link>
           <a
             href="#reservar"
             className="rounded-full bg-salvia px-5 py-2.5 text-sm font-medium text-white transition hover:bg-salvia-oscuro"
@@ -57,6 +61,9 @@ export default function Encabezado() {
               {item.texto}
             </a>
           ))}
+          <Link href="/ingresar" className="block border-b border-tinta/5 py-4 text-lg font-medium text-salvia">
+            Ingresar a mi espacio
+          </Link>
           <a
             href="#reservar"
             onClick={() => setAbierto(false)}

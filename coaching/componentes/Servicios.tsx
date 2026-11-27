@@ -1,5 +1,6 @@
 // Sección 3: SERVICIOS — una tarjeta por programa.
 // Los programas, precios y textos se editan en contenido/sitio.ts → servicios
+import Link from "next/link";
 import { sitio } from "@/contenido/sitio";
 import TituloSeccion from "./TituloSeccion";
 
@@ -57,8 +58,8 @@ export default function Servicios() {
 
               {/* Botones (mt-auto los empuja al fondo de la tarjeta) */}
               <div className="mt-auto space-y-3">
-                <a
-                  href="#reservar"
+                <Link
+                  href="/registro"
                   className={`block rounded-full py-3.5 text-center font-medium transition ${
                     programa.destacado
                       ? "bg-white text-salvia-oscuro hover:bg-crema"
@@ -66,7 +67,7 @@ export default function Servicios() {
                   }`}
                 >
                   Reservar
-                </a>
+                </Link>
 
                 {/* 💳 Botón de Mercado Pago: aparece solo si activás "pagosOnline"
                     y cargás el "linkPago" de este programa en sitio.ts */}

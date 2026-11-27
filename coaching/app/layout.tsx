@@ -22,7 +22,8 @@ const fuenteTexto = Inter({
 // Datos para buscadores y redes sociales (se toman de contenido/sitio.ts)
 export const metadata: Metadata = {
   metadataBase: new URL(sitio.url),
-  title: sitio.seo.titulo,
+  // El título de cada pantalla + el nombre de la marca (ej: "Ingresar | Lisandro Coaching")
+  title: { default: sitio.seo.titulo, template: `%s | ${sitio.marca}` },
   description: sitio.seo.descripcion,
   openGraph: {
     title: sitio.seo.titulo,

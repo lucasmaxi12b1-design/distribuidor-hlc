@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# El ejemplo de variables sí se sube
+!.env.example
+# Vista previa estática (solo para mostrar)
+/vista-previa/

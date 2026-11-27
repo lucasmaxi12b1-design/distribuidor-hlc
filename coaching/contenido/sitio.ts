@@ -38,10 +38,6 @@ export const sitio = {
   // CONTACTO Y REDES
   // ---------------------------------------------------------------
   contacto: {
-    // Tu WhatsApp: SOLO números, con código de país, sin +, espacios ni guiones.
-    // Ejemplo Argentina: 54 + 9 + código de área sin 0 + número sin 15
-    whatsapp: "5493764582808",
-    mensajeWhatsapp: "¡Hola Lisandro! Vi tu página y quiero saber más sobre las clases.", // ✏️ REVISAR
     email: "", // ✏️ REVISAR: si querés mostrar tu mail, escribilo entre las comillas
     redes: [
       // ✏️ REVISAR: agregá tus redes copiando este formato (sin las // del principio):
@@ -49,15 +45,6 @@ export const sitio = {
       // { nombre: "LinkedIn", url: "https://linkedin.com/in/tuusuario" },
     ] as { nombre: string; url: string }[],
   },
-
-  // ---------------------------------------------------------------
-  // RESERVAS (Cal.com o Calendly)
-  // Cuando crees tu cuenta, pegá acá tu link. Ejemplos:
-  //   "https://cal.com/tuusuario/primera-sesion"
-  //   "https://calendly.com/tuusuario/30min"
-  // Mientras esté vacío "", el botón "Reservá" lleva a WhatsApp.
-  // ---------------------------------------------------------------
-  linkReservas: "",
 
   // ---------------------------------------------------------------
   // MENÚ
@@ -196,7 +183,7 @@ export const sitio = {
       {
         pregunta: "¿Cómo son las clases online?",
         respuesta:
-          "Son por videollamada (Google Meet o Zoom) y duran 60 minutos. Solo necesitás conexión a internet y un lugar tranquilo donde puedas hablar con comodidad.",
+          "Son por videollamada y duran 60 minutos. Entrás desde tu espacio con un botón, sin instalar nada en la compu (en el celular puede pedirte la app gratuita Jitsi Meet). Solo necesitás internet y un lugar tranquilo.",
       },
       {
         pregunta: "¿Puedo hacerlo si vivo fuera de Argentina?",
@@ -216,7 +203,7 @@ export const sitio = {
       {
         pregunta: "¿Puedo reprogramar una clase?",
         respuesta:
-          "Sí, avisándome con al menos 24 horas de anticipación la pasamos a otro día sin costo.",
+          "Sí. Desde tu espacio podés cancelar hasta 24 horas antes y elegir otro horario, sin costo.",
       },
     ],
   },
@@ -227,19 +214,19 @@ export const sitio = {
   contactoSeccion: {
     titulo: "¿Charlamos?",
     bajada:
-      "Escribime por WhatsApp o dejame tu mensaje y te respondo dentro de las 24 horas hábiles.", // ✏️ REVISAR
-    botonWhatsapp: "Escribime por WhatsApp",
+      "¿Tenés dudas antes de empezar? Dejame tu mensaje y te respondo por mail dentro de las 24 horas hábiles.", // ✏️ REVISAR
   },
 
   // ---------------------------------------------------------------
-  // RESERVAS (la sección con el calendario)
-  // El link del calendario se carga más arriba, en "linkReservas".
+  // RESERVAS (sección que invita a crear la cuenta)
+  // Los horarios libres se cargan desde el panel → Agenda.
   // ---------------------------------------------------------------
   reservas: {
     titulo: "Reservá tu clase",
-    bajada: "Elegí el día y el horario que te queden cómodos. Vas a recibir la confirmación y el link de la videollamada por mail.", // ✏️ REVISAR
+    bajada: "Creá tu cuenta y elegí el día y el horario que te queden cómodos. Las clases, los ejercicios y los mensajes quedan todos en tu espacio.", // ✏️ REVISAR
     // Texto que se muestra mientras no hayas cargado el link del calendario:
-    sinCalendario: "Muy pronto vas a poder reservar acá mismo. Mientras tanto, escribime y coordinamos un horario.",
+    // ✏️ REVISAR
+    pasos: ["Creás tu cuenta gratis", "Elegís un horario libre", "Entrás a la clase desde tu espacio"],
   },
 
   // ---------------------------------------------------------------

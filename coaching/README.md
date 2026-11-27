@@ -1,95 +1,135 @@
-# Web de coaching — Guía rápida
+# Lisandro Coaching — Guía rápida
+
+La web tiene tres partes:
+
+| Parte                 | Dirección     | Para quién                                                                 |
+| --------------------- | ------------- | -------------------------------------------------------------------------- |
+| Página pública        | `/`           | Cualquier persona: presentación, programas, preguntas y formulario de contacto |
+| Espacio del alumno    | `/mi-espacio` | Alumnos con cuenta: clases, ejercicios, mensajes y progreso                 |
+| Panel del coach       | `/panel`      | Solo vos: alumnos, ejercicios, agenda, mensajes y consultas                 |
+
+---
 
 ## ✏️ Cómo editar textos, precios y servicios
 
 Todo está en **un solo archivo**: `contenido/sitio.ts`.
 Los textos marcados con `✏️ REVISAR` son de ejemplo: cambialos por los tuyos.
 
-| Quiero cambiar…                     | Dónde                                                   |
-| ----------------------------------- | ------------------------------------------------------- |
-| Textos, precios, programas, preguntas | `contenido/sitio.ts`                                  |
-| Mi número de WhatsApp y redes       | `contenido/sitio.ts` → `contacto`                       |
-| El link del calendario (Cal.com/Calendly) | `contenido/sitio.ts` → `linkReservas`             |
-| Mi foto                             | Subí `public/foto-perfil.jpg` y poné `foto: "/foto-perfil.jpg"` en `sobreMi` |
-| Agregar testimonios reales          | `contenido/sitio.ts` → `testimonios.lista`              |
-| Activar Mercado Pago                | `contenido/sitio.ts` → `linkPago` de cada programa y `pagosOnline: true` |
-| Colores                             | `app/globals.css` (arriba de todo)                      |
-| Íconos de la app                    | `public/iconos/` y `app/icon.png`, `app/apple-icon.png` (mismos tamaños) |
+| Quiero cambiar…                           | Dónde                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| Textos, precios, programas, preguntas     | `contenido/sitio.ts`                                                      |
+| Mi mail y redes (en la página)            | `contenido/sitio.ts` → `contacto`                                         |
+| Mi foto                                   | Subí `public/foto-perfil.jpg` y poné `foto: "/foto-perfil.jpg"` en `sobreMi` |
+| Agregar testimonios reales                | `contenido/sitio.ts` → `testimonios.lista`                                |
+| Activar Mercado Pago                      | `contenido/sitio.ts` → `linkPago` de cada programa y `pagosOnline: true`  |
+| Colores                                   | `app/globals.css` (arriba de todo)                                        |
 
-**Editar desde el celular o el navegador (sin instalar nada):** entrá a tu repositorio
-en github.com, abrí `coaching/contenido/sitio.ts`, tocá el lápiz ✏️, cambiá el texto y tocá
-**Commit changes**. Si la web ya está en Vercel, se actualiza sola en 1 o 2 minutos.
+> Los nombres de los programas de `sitio.ts` son los mismos que aparecen en el panel
+> para asignar programas y ejercicios. Si cambiás un nombre, volvé a asignar el programa a sus alumnos.
 
-## 💻 Verla en tu compu
-
-Necesitás [Node.js](https://nodejs.org) (versión LTS). En la terminal, dentro de esta carpeta:
-
-```bash
-npm install     # solo la primera vez
-npm run dev     # prende la web
-```
-
-Abrí http://localhost:3000. Para apagarla: `Ctrl + C`.
+**Editar desde el celular (sin instalar nada):** en github.com abrí `coaching/contenido/sitio.ts`,
+tocá el lápiz ✏️, cambiá el texto y tocá **Commit changes**. Vercel publica el cambio solo en 1 o 2 minutos.
 
 ---
 
-## 🚀 1. Publicarla gratis en Vercel
+## 🚀 1. Publicarla en Vercel (gratis)
 
 1. Entrá a **vercel.com** → **Sign Up** → **Continue with GitHub** (plan *Hobby*, gratis).
-2. Tocá **Add New… → Project** y elegí el repositorio `distribuidor-hlc` → **Import**.
-3. En **Root Directory** tocá **Edit** y elegí la carpeta **`coaching`**. ⚠️ Este paso es clave,
-   porque el repositorio también tiene la web de la distribuidora.
-4. Lo demás dejalo como viene (Vercel detecta Next.js solo) → **Deploy**.
-5. En 1 o 2 minutos te da una dirección tipo `https://tu-proyecto.vercel.app`. ¡Ya está online!
-6. Copiá esa dirección en `contenido/sitio.ts` → `url` (sirve para la vista previa en WhatsApp).
+2. **Add New… → Project** → elegí el repositorio `distribuidor-hlc` → **Import**.
+3. En **Root Directory** tocá **Edit** y elegí la carpeta **`coaching`**. ⚠️ Es clave, porque el
+   repositorio también tiene la web de la distribuidora.
+4. Abrí **Environment Variables** y agregá:
+   - **Key:** `ADMIN_EMAIL` · **Value:** el mail con el que vas a entrar al panel (ej: `lisandro@gmail.com`).
+5. Tocá **Deploy**. En 1 o 2 minutos te da una dirección tipo `https://tu-proyecto.vercel.app`.
 
-> **Sobre la rama:** Vercel publica como "oficial" la rama `main`. La web está ahora en la rama
-> `claude/loving-franklin-dk77op`. Tenés dos opciones:
-> - Unir esa rama a `main` en GitHub (con un *Pull Request*). La tienda en Netlify no se ve
->   afectada, porque Netlify solo publica la carpeta `site`.
-> - O en Vercel: **Settings → Environments → Production → Branch Tracking** y poner esa rama.
->
-> Más adelante te conviene mover la carpeta `coaching` a un repositorio propio.
+### Crear la base de datos (una sola vez)
 
-Cada vez que cambies algo en GitHub, Vercel vuelve a publicar solo.
+Sin base de datos, la página pública funciona, pero el sistema (cuentas, clases, ejercicios) no.
 
-## 🌐 2. Conectar tu dominio propio (.com.ar)
+1. En tu proyecto de Vercel → pestaña **Storage** → **Create Database** → elegí **Neon** (Postgres, plan gratis).
+2. Nombrala (ej: `lisandro-coaching`), región **São Paulo** si aparece (es la más cercana) → **Create**.
+3. Cuando te pregunte, **conectala a tu proyecto** (deja marcados todos los entornos).
+   Vercel agrega sola la variable `DATABASE_URL`: no tenés que copiar ninguna clave.
+4. Andá a **Deployments** → en el último, menú **⋯** → **Redeploy**.
+
+Las tablas se crean solas la primera vez que alguien usa el sistema.
+
+### Crear tu cuenta de coach
+
+1. Entrá a `https://tu-proyecto.vercel.app/registro`.
+2. Registrate con **el mismo mail que pusiste en `ADMIN_EMAIL`**. Vas a entrar directo a tu panel.
+3. Desde ahí: cargá horarios en **Agenda** y creá **Ejercicios**.
+
+> **Sobre la rama:** Vercel publica como oficial la rama `main`. La web está en la rama
+> `claude/loving-franklin-dk77op`. Uní esa rama a `main` en GitHub (con un *Pull Request*) o, en Vercel,
+> andá a **Settings → Environments → Production → Branch Tracking** y elegí esa rama. La tienda de Netlify
+> no se ve afectada: Netlify solo publica la carpeta `site`.
+
+---
+
+## 🧑‍🏫 2. Cómo se usa el sistema
+
+**Alumnos**
+- Crean su cuenta desde la página (botón "Reservá tu clase" → "Crear mi cuenta").
+- En **Clases** eligen un horario libre. Pueden cancelar hasta 24 h antes.
+- En **Ejercicios** ven lo que les asignaste y lo marcan como hecho.
+- En **Mensajes** te escriben. Los mensajes nuevos se revisan solos cada 15 segundos.
+
+**Vos (panel)**
+- **Agenda:** cargás horarios libres (un día suelto o repetido varias semanas). Ves quién reservó.
+- **Alumnos:** tocás un alumno para asignarle programa, darle ejercicios (con fecha opcional),
+  dejarle devoluciones, responderle mensajes o generarle una contraseña nueva si se la olvidó.
+- **Ejercicios:** los creás una vez. Si les ponés un programa, se asignan solos a todos los alumnos
+  de ese programa (también a los que se sumen después).
+- **Consultas:** mensajes del formulario de la página, de personas que todavía no tienen cuenta.
+
+**Las clases por videollamada**
+- Cada clase tiene su propia sala privada de **Jitsi Meet** (gratis).
+- El botón **"Entrar a la clase"** aparece 15 minutos antes, tanto para vos como para el alumno.
+- **Entrá vos primero:** Jitsi le pide a quien abre la sala que inicie sesión (con Google, por ejemplo).
+  Una vez adentro, el alumno entra sin cuenta.
+- En la compu se abre en el navegador; en el celular conviene tener la app gratuita **Jitsi Meet**.
+
+---
+
+## 🌐 3. Conectar tu dominio propio (.com.ar)
 
 1. **Registrá el dominio** en **nic.ar** (necesitás CUIT/CUIL y clave fiscal de ARCA).
-   Buscá el nombre, pagá el registro anual y listo.
-2. **En Vercel:** entrá al proyecto → **Settings → Domains** → escribí `tudominio.com.ar` → **Add**.
-   Aceptá también agregar `www.tudominio.com.ar`.
-3. Vercel te va a mostrar cómo configurarlo. Para `.com.ar`, lo más fácil es **delegar** el
-   dominio a Vercel:
-   - En **nic.ar** → **Mis dominios** → tu dominio → **Delegar**.
-   - Cargá estos dos servidores (DNS):
-     - `ns1.vercel-dns.com`
-     - `ns2.vercel-dns.com`
-   - Guardá.
-4. Esperá. Puede tardar de unos minutos a 24/48 horas. Cuando en Vercel aparezca **Valid Configuration**
-   ✅, tu web ya funciona en tu dominio, con candadito de seguridad (HTTPS) gratis.
+2. **En Vercel:** proyecto → **Settings → Domains** → escribí `tudominio.com.ar` → **Add**
+   (aceptá también `www.tudominio.com.ar`).
+3. **En nic.ar** → **Mis dominios** → tu dominio → **Delegar** → cargá estos servidores:
+   - `ns1.vercel-dns.com`
+   - `ns2.vercel-dns.com`
+4. Esperá (de minutos a 24/48 h) hasta que Vercel diga **Valid Configuration** ✅.
 5. Cambiá `url` en `contenido/sitio.ts` por `https://tudominio.com.ar`.
 
-## 📱 3. Instalarla como app
+## 📱 4. Instalarla como app
 
-**Android (Chrome):** entrá a tu web → abajo de todo tocá **Instalar app** (o el menú ⋮ →
-**Instalar aplicación** / **Agregar a la pantalla principal**).
+- **Android (Chrome):** abajo de todo en la página tocá **Instalar app** (o menú ⋮ → **Instalar aplicación**).
+- **iPhone (Safari):** **Compartir** (cuadrado con flecha) → **Agregar a inicio**.
+- **Compu (Chrome o Edge):** ícono de instalar en la barra de direcciones → **Instalar**.
 
-**iPhone (Safari, tiene que ser Safari):** entrá a tu web → tocá **Compartir** (el cuadrado con la
-flecha hacia arriba) → **Agregar a inicio** → **Agregar**.
+La app instalada abre directo en el espacio del alumno (o en tu panel si sos vos).
 
-**Compu (Chrome o Edge):** en la barra de direcciones aparece un ícono de instalar (un monitor
-con una flecha) → **Instalar**. También podés usar el botón **Instalar app** del pie de página.
+---
 
-La app abre en pantalla completa, sin barra del navegador, con el ícono de la marca.
+## 💻 Para quien programe: correrla en una compu
 
-> La instalación solo funciona con la web publicada (con `https://`), no en `localhost` desde otro aparato.
+Necesita [Node.js](https://nodejs.org) (LTS) y una base Postgres.
 
-## ✅ Checklist antes de compartir el link
+```bash
+cp .env.example .env.local   # y completá DATABASE_URL y ADMIN_EMAIL
+npm install
+npm run dev                  # http://localhost:3000
+```
 
-- [ ] Cambiar todos los textos `✏️ REVISAR` de `contenido/sitio.ts`
-- [ ] Poner tu número de WhatsApp real y tus redes
+Archivos principales: `lib/db.ts` (tablas), `lib/sesion.ts` (cuentas), `lib/datos.ts` (lecturas),
+`app/acciones.ts` (todo lo que modifica datos), `app/mi-espacio/` (alumno), `app/panel/` (coach).
+
+## ✅ Antes de compartir el link
+
+- [ ] Cambiar los textos `✏️ REVISAR` de `contenido/sitio.ts` (precios, formación, historia)
 - [ ] Subir tu foto
-- [ ] Crear tu cuenta en Cal.com o Calendly y pegar el link en `linkReservas`
-- [ ] Poner la dirección final en `url`
-- [ ] Probar el link en WhatsApp (mandátelo a vos), para ver la vista previa
+- [ ] Crear la base de datos y tu cuenta de coach
+- [ ] Cargar horarios en la Agenda y algunos ejercicios
+- [ ] Hacer una prueba con una cuenta de alumno (por ejemplo, con otro mail tuyo)
