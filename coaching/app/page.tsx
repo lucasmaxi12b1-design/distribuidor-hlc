@@ -2,6 +2,7 @@
 // Para cambiar el orden, mové las líneas de lugar.
 import Encabezado from "@/componentes/Encabezado";
 import Inicio from "@/componentes/Inicio";
+import SobreMi from "@/componentes/SobreMi";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <Encabezado />
       <main>
         <Inicio />
+        <SobreMi />
       </main>
     </>
   );

@@ -84,9 +84,13 @@ export const sitio = {
 
   // ---------------------------------------------------------------
   // 2. SOBRE MÍ
-  // Tu foto: guardala como  public/foto-perfil.jpg  (reemplazá la de ejemplo).
   // ---------------------------------------------------------------
   sobreMi: {
+    // 📷 TU FOTO: copiá tu foto a la carpeta  coaching/public/
+    // con el nombre  foto-perfil.jpg  y acá escribí "/foto-perfil.jpg".
+    // Mientras esté vacío "", se muestra un recuadro de reemplazo.
+    // Ideal: foto vertical, buena luz, mínimo 800 px de ancho.
+    foto: "",
     titulo: "Hola, soy Laura", // ✏️ REVISAR
     historia: [
       // ✏️ REVISAR: contá tu historia en 2 o 3 párrafos cortos
